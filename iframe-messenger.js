@@ -1,13 +1,11 @@
 export class IframeMessenger {
     constructor({
         targetWindow,
-        loggerProvider,
         window,
         nanoid
     }){
         this._targetWindow = targetWindow;
         this._messageHandlers = new Map();
-        this._logger = loggerProvider.create('IframeMessenger');
         this._window = window;
         this._nanoid = nanoid;
         this._handleIframeMessage = this._handleIframeMessage.bind(this);
@@ -38,13 +36,7 @@ export class IframeMessenger {
     }
 
     sendMessageToIframe(command, payload){
-        try {
-            this._targetWindow.postMessage({ command, payload }, '*');
-        }
-        catch (exception){
-            this._logger.warn(`Failed to send message ${command}`, exception);
-            throw exception;
-        }
+        this._targetWindow.postMessage({ command, payload }, '*');
     }
 
     sendRequestToIframe(command, payload){
@@ -80,7 +72,7 @@ export class IframeMessenger {
         }
         for (const handler of handlers) {
             Promise.resolve().then(() => handler(payload))
-                .catch((error) => this._logger.warn('Could not handle incoming message:', command, error));
+                .catch((error) => console.warn('[IframeApi] Could not handle incoming message:', command, error));
         }
     }
 
