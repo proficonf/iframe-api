@@ -1,0 +1,19 @@
+{
+    "compilerOptions": {
+        "target": "es2018",
+        "strict": true,
+        "checkJs": true,
+        "moduleResolution": "node",
+        "noImplicitAny": false,
+        "disableSizeLimit": true,
+        "strictNullChecks": false,
+        "module": "commonjs",
+        "suppressImplicitAnyIndexErrors": true
+    },
+    "typeAcquisition": {
+        "enable": true
+    },
+    "exclude": [
+        "node_modules"
+    ]
+}

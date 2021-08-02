@@ -3,6 +3,7 @@ import { nanoid } from 'nanoid';
 import { IframeLoader } from './iframe-loader';
 import { IframeMessenger } from './iframe-messenger';
 import { MediaSourcesManager } from './media-sources/media-sources-manager';
+import { EventForwarder } from './event-forwarder';
 
 const APP_ORIGIN = 'https://app.proficonf.com';
 const IFRAME_ALLOW_POLICIES = [
@@ -21,8 +22,8 @@ const DEFAULT_HEIGHT = '100%';
 class EmbeddedRoom {
     constructor({
         rootElement,
-        user,
         meetingId,
+        user = {},
         iframe: {
             width,
             height,
@@ -76,7 +77,7 @@ class EmbeddedRoom {
     }
 
     removeEventListener(event, listener){
-        this._eventEmitter.removeEventListener(event, listener);
+        this._eventEmitter.removeListener(event, listener);
     }
 
     _initializeIframe(){
@@ -95,6 +96,11 @@ class EmbeddedRoom {
 
     _initCommandsBackend(){
         this._mediaSources = new MediaSourcesManager({ iframeMessenger: this._iframeMessenger });
+        this._eventForwarder = new EventForwarder({
+            iframeMessenger: this._iframeMessenger,
+            eventEmitter: this._eventEmitter
+        });
+        this._eventForwarder.initialize();
     }
 
     _createIframeElement({ meetingId, width, height, style = {} }){
@@ -104,7 +110,7 @@ class EmbeddedRoom {
         iframe.allow = IFRAME_ALLOW_POLICIES.join('; ');
         iframe.name = iframeId;
         iframe.id = iframeId;
-        iframe.style.border = 0;
+        iframe.style.border = '0';
         iframe.setAttribute('allowFullScreen', 'true');
 
         for(const [key, value] of Object.entries(style)){
@@ -117,7 +123,7 @@ class EmbeddedRoom {
         return iframe;
     }
 
-    _buildUrl({ user = {}, meetingId }){
+    _buildUrl({ user, meetingId }){
         let url = `${APP_ORIGIN}/j/${meetingId}?embedded=1&appOrigin=${encodeURIComponent(location.origin)}`;
 
         if(user.token){
