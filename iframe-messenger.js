@@ -39,7 +39,7 @@ export class IframeMessenger {
         this._targetWindow.postMessage({ command, payload }, '*');
     }
 
-    sendRequestToIframe(command, payload){
+    sendRequestToIframe(command, payload = {}){
         return new Promise((resolve, reject) => {
             const commandId = this._nanoid();
             this._addMessageHandlerOnce(`re:${command}:${commandId}`, (payload) => {

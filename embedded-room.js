@@ -2,6 +2,7 @@ import { EventEmitter } from 'events';
 import { nanoid } from 'nanoid';
 import { IframeLoader } from './iframe-loader';
 import { IframeMessenger } from './iframe-messenger';
+import { MediaSourcesManager } from './media-sources/media-sources-manager';
 
 const APP_ORIGIN = 'https://app.proficonf.com';
 const IFRAME_ALLOW_POLICIES = [
@@ -62,6 +63,10 @@ class EmbeddedRoom {
         return this._rootElement;
     }
 
+    get mediaSources(){
+        return this._mediaSources;
+    }
+
     on(event, listener){
         this._eventEmitter.on(event, listener);
     }
@@ -88,7 +93,9 @@ class EmbeddedRoom {
         });
     }
 
-    _initCommandsBackend(){}
+    _initCommandsBackend(){
+        this._mediaSources = new MediaSourcesManager({ iframeMessenger: this._iframeMessenger });
+    }
 
     _createIframeElement({ meetingId, width, height, style = {} }){
         const iframeId = `ProficonfEmbeddedRoom${meetingId}`;
