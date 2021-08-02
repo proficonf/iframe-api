@@ -4,7 +4,19 @@ import { IframeLoader } from './iframe-loader';
 import { IframeMessenger } from './iframe-messenger';
 
 const APP_ORIGIN = 'https://app.proficonf.com';
-const IFRAME_ALLOW = 'camera; microphone; display-capture; autoplay; clipboard-write; clipboard-read; fullscreen; speaker;';
+const IFRAME_ALLOW_POLICIES = [
+    'camera',
+    'microphone',
+    'display-capture', 
+    'autoplay',
+    'clipboard-write',
+    'clipboard-read',
+    'fullscreen',
+    'speaker'
+];
+const DEFAULT_WIDTH = '100%';
+const DEFAULT_HEIGHT = '100%';
+
 class EmbeddedRoom {
     constructor({
         rootElement,
@@ -12,7 +24,8 @@ class EmbeddedRoom {
         meetingId,
         iframe: {
             width,
-            height
+            height,
+            style
         }
     }){
         this._eventEmitter = new EventEmitter();
@@ -25,6 +38,7 @@ class EmbeddedRoom {
             meetingId,
             width,
             height,
+            style
         });
     }
 
@@ -42,6 +56,10 @@ class EmbeddedRoom {
 
     get iframeElement(){
         return this._iframeElement;
+    }
+
+    get rootElement(){
+        return this._rootElement;
     }
 
     on(event, listener){
@@ -72,24 +90,28 @@ class EmbeddedRoom {
 
     _initCommandsBackend(){}
 
-    _createIframeElement({ meetingId, width, height }){
+    _createIframeElement({ meetingId, width, height, style = {} }){
         const iframeId = `ProficonfEmbeddedRoom${meetingId}`;
         const iframe = document.createElement('iframe');
 
-        iframe.allow = IFRAME_ALLOW;
+        iframe.allow = IFRAME_ALLOW_POLICIES.join('; ');
         iframe.name = iframeId;
         iframe.id = iframeId;
-        iframe.style.width = width;
-        iframe.style.height = height;
         iframe.style.border = 0;
         iframe.setAttribute('allowFullScreen', 'true');
+
+        for(const [key, value] of Object.entries(style)){
+            iframe.style[key] = value;
+        }
+
+        iframe.style.width = width || DEFAULT_WIDTH;
+        iframe.style.height = height || DEFAULT_HEIGHT;
 
         return iframe;
     }
 
     _buildUrl({ user = {}, meetingId }){
-        const origin = encodeURIComponent(location.origin);
-        let url = `${APP_ORIGIN}/j/${meetingId}?embedded=1&embedOrigin=${origin}`;
+        let url = `${APP_ORIGIN}/j/${meetingId}?embedded=1&appOrigin=${encodeURIComponent(location.origin)}`;
 
         if(user.token){
             url += `&userToken=${user.token}`;
