@@ -18,7 +18,7 @@ const IFRAME_ALLOW_POLICIES = [
 ];
 const DEFAULT_WIDTH = '100%';
 const DEFAULT_HEIGHT = '100%';
-
+const APP_INITIALIZATION_TIMEOUT_MS = 5000;
 class EmbeddedRoom {
     constructor({
         rootElement,
@@ -32,6 +32,7 @@ class EmbeddedRoom {
     }){
         this._eventEmitter = new EventEmitter();
         this._rootElement = rootElement;
+        this._meetingId = meetingId;
         this._meetingUrl = this._buildUrl({
             user,
             meetingId,
@@ -53,7 +54,21 @@ class EmbeddedRoom {
             .then(()=> this._initializeIframe())
             .then(()=> this._createIframeMessenger())
             .then(()=> this._initCommandsBackend())
-            .then(()=> this._iframeMessenger.initialize());   
+            .then(()=> this._iframeMessenger.initialize())
+            .then(()=>{
+                const promise = new Promise((resolve, reject) => {
+                    const initializationTimeout = setTimeout(() =>{
+                        reject(new Error('App initialization timeout'));
+                    }, APP_INITIALIZATION_TIMEOUT_MS);
+
+                    this._iframeMessenger.addMessageHandlerOnce('app:ready', (payload)=>{
+                        resolve(payload);
+                        clearTimeout(initializationTimeout);
+                    });
+                });
+                this._iframeMessenger.sendMessageToIframe('initialize', {});
+                return promise;
+            });
     }
 
     get iframeElement(){
@@ -88,9 +103,11 @@ class EmbeddedRoom {
 
     _createIframeMessenger(){
         this._iframeMessenger = new IframeMessenger({
+            targetOrigin: APP_ORIGIN,
             targetWindow: this.iframeElement.contentWindow,
             window,
-            nanoid
+            nanoid,
+            correlationId: this._meetingId
         });
     }
 
