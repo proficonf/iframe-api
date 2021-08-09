@@ -18,7 +18,7 @@ const IFRAME_ALLOW_POLICIES = [
 ];
 const DEFAULT_WIDTH = '100%';
 const DEFAULT_HEIGHT = '100%';
-const APP_INITIALIZATION_TIMEOUT_MS = 5000;
+const APP_INITIALIZATION_TIMEOUT_MS = 60000;
 class EmbeddedRoom {
     constructor({
         rootElement,
