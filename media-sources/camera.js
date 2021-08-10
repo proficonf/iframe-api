@@ -1,25 +1,27 @@
 // TODO: keep status locally synchronized storing it here
 export class Camera {
     constructor( iframeMessenger ){
-        this.iframeMessenger = iframeMessenger;
+        this._iframeMessenger = iframeMessenger;
     }
 
-    enable(){
-        return this._iframeMessenger.sendRequestToIframe('mediaSources.enableCamera');
+    enable(constraints){
+        return this._iframeMessenger.sendRequestToIframe('enableCamera', {
+            constraints
+        });
     }
 
     disable(){
-        return this._iframeMessenger.sendRequestToIframe('mediaSources.disableCamera');
+        return this._iframeMessenger.sendRequestToIframe('disableCamera');
     }
 
-    switch({ deviceId, constraints }){
+    switch(constraints){
         return this._iframeMessenger.sendRequestToIframe(
-            'mediaSources.updateCameraDevice',
-            { deviceId, constraints }
+            'updateCameraDevice',
+            { constraints }
         );
     }
 
-    getStatus(){
-        return this._iframeMessenger.sendRequestToIframe('mediaSources.getCameraStatus');
+    getState(){
+        return this._iframeMessenger.sendRequestToIframe('getCameraState');
     }
 }

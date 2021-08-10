@@ -1,6 +1,6 @@
 import { Camera } from './camera';
 import { Microphone } from './microphone';
-import { DisplayCapture } from './display-capture';
+import { ScreenSharing } from './screen-sharing';
 
 export class MediaSourcesManager {
     constructor({ iframeMessenger }){
@@ -8,7 +8,7 @@ export class MediaSourcesManager {
 
         this._camera = new Camera(this._iframeMessenger);
         this._microphone = new Microphone(this._iframeMessenger);
-        this._displayCapture = new DisplayCapture(this._iframeMessenger);
+        this._screenSharing = new ScreenSharing(this._iframeMessenger);
     }
 
     listAvailableDevices(){
@@ -23,7 +23,7 @@ export class MediaSourcesManager {
         return this._camera;
     }
 
-    get displayCapture(){
-        return this._displayCapture;
+    get screenSharing(){
+        return this._screenSharing;
     }
 }

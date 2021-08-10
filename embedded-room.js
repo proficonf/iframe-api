@@ -79,8 +79,52 @@ class EmbeddedRoom {
         return this._rootElement;
     }
 
-    get mediaSources(){
-        return this._mediaSources;
+    enableCamera(constraints){
+        return this._mediaSources.camera.enable(constraints);
+    }
+
+    disableCamera(){
+        return this._mediaSources.camera.disable();
+    }
+
+    updateCamera(constraints){
+        return this._mediaSources.camera.switch(constraints);
+    }
+
+    getCameraState(){
+        return this._mediaSources.camera.getState();
+    }
+
+    enableMicrophone(constraints){
+        return this._mediaSources.microphone.enable(constraints);
+    }
+
+    disableMicrophone(){
+        return this._mediaSources.microphone.disable();
+    }
+
+    updateMicrophone(constraints){
+        return this._mediaSources.microphone.switch(constraints);
+    }
+
+    getMicrophoneState(){
+        return this._mediaSources.microphone.getState();
+    }
+
+    enableScreenSharing(constraints){
+        return this._mediaSources.screenSharing.enable(constraints);
+    }
+
+    disableScreenSharing(){
+        return this._mediaSources.screenSharing.disable();
+    }
+
+    listAvailableDevices(){
+        return this._mediaSources.listAvailableDevices();
+    }
+
+    updateScreenSharing(mediaTrack){
+        return this._mediaSources.screenSharing.switch(mediaTrack);
     }
 
     on(event, listener){
