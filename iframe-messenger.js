@@ -62,9 +62,9 @@ export class IframeMessenger {
         });
     }
 
-    sendReplyToIframeRequest(messageName, messageId,  payload){
+    sendReplyToIframeRequest(messageName, commandId,  payload){
         this.sendMessageToIframe(
-            `re:${messageName}:${messageId}`,
+            `re:${messageName}:${commandId}`,
             payload
         );
     }
