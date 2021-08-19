@@ -14,7 +14,6 @@ const IFRAME_ALLOW_POLICIES = [
     'clipboard-write',
     'clipboard-read',
     'fullscreen',
-    'speaker'
 ];
 const DEFAULT_WIDTH = '100%';
 const DEFAULT_HEIGHT = '100%';
@@ -29,7 +28,8 @@ export class EmbeddedRoom {
             width,
             height,
             style
-        }
+        },
+        appOrigin
     }){
         this._eventEmitter = new EventEmitter();
         this._rootElement = rootElement;
@@ -44,6 +44,7 @@ export class EmbeddedRoom {
             height,
             style
         });
+        this._appOrigin  = appOrigin || APP_ORIGIN;
     }
 
     static create(...args){
@@ -142,7 +143,7 @@ export class EmbeddedRoom {
 
     _initializeIframe(){
         this._rootElement.appendChild(this._iframeElement);
-        return new IframeLoader({ iframeElement: this.iframeElement})
+        return new IframeLoader(this._iframeElement)
             .loadUrl(this._meetingUrl);
     }
 
@@ -186,7 +187,7 @@ export class EmbeddedRoom {
     }
 
     _buildUrl({ user, meetingId }){
-        let url = `${APP_ORIGIN}/j/${meetingId}?embedded=1&appOrigin=${encodeURIComponent(location.origin)}`;
+        let url = `${this._appOrigin}/j/${meetingId}?embedded=1&appOrigin=${encodeURIComponent(location.origin)}`;
 
         if(user.token){
             url += `&userToken=${user.token}`;
@@ -202,4 +203,3 @@ export class EmbeddedRoom {
     }
 }
 
-module.exports = EmbeddedRoom;

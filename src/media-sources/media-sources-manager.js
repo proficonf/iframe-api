@@ -4,7 +4,7 @@ import { ScreenSharing } from './screen-sharing';
 
 export class MediaSourcesManager {
     constructor({ iframeMessenger }){
-        this._iframeMessenger = new iframeMessenger;
+        this._iframeMessenger = iframeMessenger;
 
         this._camera = new Camera(this._iframeMessenger);
         this._microphone = new Microphone(this._iframeMessenger);

@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <title>
+        <%= htmlWebpackPlugin.options.title %>
+    </title>
+</head>
+
+<body>
+    <div class="buttons-container">
+        <button id="enableCamera" onclick="enableCamera">EnableCamera</button>
+        <button id="disableCamera" onclick="disableCamera">DisableCamera</button>
+
+        <button id="enableMicrophone" onclick="enableMicrophone">EnableMicrophone</button>
+        <button id="disableMicrophone" onclick="disableMicrophone">DisableMicrophone</button>
+        <div style="height: 70px; overflow-y:scroll">
+            <code id="log"></code>
+        </div>
+    </div>
+    <div id="iframeWrapper"></div>
+</body>
+
+</html>
