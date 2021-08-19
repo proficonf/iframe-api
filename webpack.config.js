@@ -4,7 +4,6 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 module.exports = {
     entry: {
         'iframe-api': './src/index.js',
-        'example': './example/index.js'
     },
     mode: 'development',
     devtool: 'inline-source-map',
@@ -29,7 +28,7 @@ module.exports = {
         static: {
             directory: path.join(__dirname, 'dist'),
         },
-        port: 9000
+        port: 9001
     },
     cache: false
 };

@@ -34,6 +34,7 @@ export class EmbeddedRoom {
         this._eventEmitter = new EventEmitter();
         this._rootElement = rootElement;
         this._meetingId = meetingId;
+        this._appOrigin  = appOrigin || APP_ORIGIN;
         this._meetingUrl = this._buildUrl({
             user,
             meetingId,
@@ -44,7 +45,6 @@ export class EmbeddedRoom {
             height,
             style
         });
-        this._appOrigin  = appOrigin || APP_ORIGIN;
     }
 
     static create(...args){

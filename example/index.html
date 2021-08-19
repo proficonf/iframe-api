@@ -9,17 +9,83 @@
 </head>
 
 <body>
-    <div class="buttons-container">
-        <button id="enableCamera" onclick="enableCamera">EnableCamera</button>
-        <button id="disableCamera" onclick="disableCamera">DisableCamera</button>
+    <div id="initForm">
+        <input type="text" id="meetingUrl" placeholder="enter meetingUrl" />
+        <button id="joinBtn">Join</button>
+    </div>
 
-        <button id="enableMicrophone" onclick="enableMicrophone">EnableMicrophone</button>
-        <button id="disableMicrophone" onclick="disableMicrophone">DisableMicrophone</button>
-        <div style="height: 70px; overflow-y:scroll">
-            <code id="log"></code>
-        </div>
+    <div class="buttons-container" id="screen" style="display: none">
+        <button id="enableCamera">EnableCamera</button>
+        <button id="disableCamera">DisableCamera</button>
+
+        <button id="enableMicrophone">EnableMicrophone</button>
+        <button id="disableMicrophone">DisableMicrophone</button>
     </div>
     <div id="iframeWrapper"></div>
+
+    <script type="text/javascript">
+        let room;
+        const userName = 'John Doe';
+
+
+        async function initializeRoom(appOrigin, meetingId) {
+            room = window.Proficonf.EmbeddedRoom.create({
+                meetingId,
+                appOrigin,
+                rootElement: document.querySelector('div#iframeWrapper'),
+                user: {
+                    name: userName,
+                    locale: 'en'
+                },
+                iframe: {
+                    width: '100%',
+                    height: '70vh',
+                    style: {
+                        border: '3px solid black',
+                        backgroundColor: 'grey'
+                    }
+                },
+            });
+
+            room.on('*', (...args) => {
+                console.log('Event received', args);
+            });
+
+            await room.join();
+        }
+
+
+        (() => {
+
+            document.querySelector('#joinBtn').addEventListener('click', () => {
+                const meetingUrl = document.querySelector('#meetingUrl').value;
+
+                const [origin, meetingId] = meetingUrl.split('/j/');
+                document.querySelector('#initForm').style.display = 'none';
+                document.querySelector('#screen').style.display = 'block';
+
+                initializeRoom(origin, meetingId);
+            });
+
+            document.querySelector('#enableCamera').addEventListener('click', ()=>{
+                room.enableCamera();
+            });
+            document.querySelector('#disableCamera').addEventListener('click', ()=>{
+                room.disableCamera();
+            });
+
+            document.querySelector('#enableMicrophone').addEventListener('click', ()=>{
+                room.enableMicrophone();
+            });
+
+            document.querySelector('#disableMicrophone').addEventListener('click', ()=>{
+                room.disableMicrophone();
+            });
+
+            window.room = room;
+        })();
+
+    </script>
 </body>
 
 </html>
