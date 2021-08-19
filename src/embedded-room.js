@@ -149,7 +149,7 @@ export class EmbeddedRoom {
 
     _createIframeMessenger(){
         this._iframeMessenger = new IframeMessenger({
-            targetOrigin: APP_ORIGIN,
+            targetOrigin: this._appOrigin,
             targetWindow: this.iframeElement.contentWindow,
             window,
             nanoid,

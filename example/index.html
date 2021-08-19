@@ -10,7 +10,12 @@
 
 <body>
     <div id="initForm">
-        <input type="text" id="meetingUrl" placeholder="enter meetingUrl" />
+        <input 
+            type="text"
+            id="meetingUrl"
+            placeholder="enter meetingUrl"
+            value="http://host.docker.internal:8000/j/3hPsGhLKYqH"
+        />
         <button id="joinBtn">Join</button>
     </div>
 
@@ -47,8 +52,8 @@
                 },
             });
 
-            room.on('*', (...args) => {
-                console.log('Event received', args);
+            room.on('*', (data) => {
+                console.log('Event received', data);
             });
 
             await room.join();

@@ -40,9 +40,11 @@ export class IframeMessenger {
     }
 
     sendMessageToIframe(command, payload){
-        payload.correlationId = this._correlationId;
-
-        this._targetWindow.postMessage({ command, payload }, this._targetOrigin);
+        this._targetWindow.postMessage({
+            command,
+            payload,
+            correlationId: this._correlationId
+        }, this._targetOrigin);
     }
 
     sendRequestToIframe(command, payload = {}){
