@@ -1,27 +1,27 @@
 // TODO: keep status locally synchronized storing it here
 export class Microphone {
-    constructor( iframeMessenger ){
+    constructor( iframeMessenger ) {
         this._iframeMessenger = iframeMessenger;
     }
 
-    enable(constraints){
+    enable(constraints) {
         return this._iframeMessenger.sendRequestToIframe('enableMicrophone', {
             constraints
         });
     }
 
-    disable(){
+    disable() {
         return this._iframeMessenger.sendRequestToIframe('disableMicrophone');
     }
 
-    switch(constraints){
+    switch(constraints) {
         return this._iframeMessenger.sendRequestToIframe(
             'updateMicrophoneDevice',
             { constraints }
         );
     }
 
-    getState(){
+    getState() {
         return this._iframeMessenger.sendRequestToIframe('getMicrophoneState');
     }
 }

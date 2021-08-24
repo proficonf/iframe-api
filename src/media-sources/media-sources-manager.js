@@ -3,7 +3,7 @@ import { Microphone } from './microphone';
 import { ScreenSharing } from './screen-sharing';
 
 export class MediaSourcesManager {
-    constructor({ iframeMessenger }){
+    constructor({ iframeMessenger }) {
         this._iframeMessenger = iframeMessenger;
 
         this._camera = new Camera(this._iframeMessenger);
@@ -11,19 +11,19 @@ export class MediaSourcesManager {
         this._screenSharing = new ScreenSharing(this._iframeMessenger);
     }
 
-    listAvailableDevices(){
+    listAvailableDevices() {
         return this._iframeMessenger.sendRequestToIframe('listAvailableDevices');
     }
 
-    get microphone(){
+    get microphone() {
         return this._microphone;
     }
 
-    get camera(){
+    get camera() {
         return this._camera;
     }
 
-    get screenSharing(){
+    get screenSharing() {
         return this._screenSharing;
     }
 }

@@ -1,3 +1,3 @@
-import { EmbeddedRoom } from "./embedded-room";
+import { EmbeddedRoom } from './embedded-room';
 
 export { EmbeddedRoom };

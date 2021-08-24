@@ -5,7 +5,7 @@ export class IframeMessenger {
         nanoid,
         correlationId,
         targetOrigin,
-    }){
+    }) {
         this._targetOrigin = targetOrigin;
         this._correlationId = correlationId;
         this._targetWindow = targetWindow;
@@ -19,27 +19,27 @@ export class IframeMessenger {
         this._window.addEventListener('message', this._handleIframeMessage);
     }
 
-    dispose(){
+    dispose() {
         this._window.removeEventListener('message', this._handleIframeMessage);
         this._messageHandlers.clear();
     }
 
-    addMessageHandler(command, handler){
-        if(!this._messageHandlers.has(command)){
+    addMessageHandler(command, handler) {
+        if (!this._messageHandlers.has(command)) {
             this._messageHandlers.set(command, new Set());
         }
         this._messageHandlers.get(command).add(handler);
         return this;
     }
 
-    removeMessageHandler(command, handler){
-        if(this._messageHandlers.has(command)){
+    removeMessageHandler(command, handler) {
+        if (this._messageHandlers.has(command)) {
             this._messageHandlers.get(command).delete(handler);
         }
         return this;
     }
 
-    sendMessageToIframe(command, payload){
+    sendMessageToIframe(command, payload) {
         this._targetWindow.postMessage({
             command,
             payload,
@@ -47,7 +47,7 @@ export class IframeMessenger {
         }, this._targetOrigin);
     }
 
-    sendRequestToIframe(command, payload = {}){
+    sendRequestToIframe(command, payload = {}) {
         return new Promise((resolve, reject) => {
             const commandId = this._nanoid();
             this.addMessageHandlerOnce(`re:${command}:${commandId}`, (payload) => {
@@ -64,7 +64,7 @@ export class IframeMessenger {
         });
     }
 
-    sendReplyToIframeRequest(messageName, commandId,  payload){
+    sendReplyToIframeRequest(messageName, commandId, payload) {
         this.sendMessageToIframe(
             `re:${messageName}:${commandId}`,
             payload
@@ -72,33 +72,32 @@ export class IframeMessenger {
     }
 
     /** @param { MessageEvent } event */
-    _handleIframeMessage(event){
-        if(event.origin !== this._targetOrigin){
+    _handleIframeMessage(event) {
+        if (event.origin !== this._targetOrigin) {
             return;
         }
 
         const { correlationId, command, payload } = event.data;
 
-        if(correlationId !== this._correlationId){
+        if (correlationId !== this._correlationId) {
             return;
         }
-        
+
         const handlers = this._messageHandlers.get(command);
-        if(!handlers) {
+        if (!handlers) {
             return;
         }
         for (const handler of handlers) {
-            Promise.resolve().then(() => handler(payload))
-                .catch((error) => console.warn('[IframeApi] Could not handle incoming message:', command, error));
+            Promise.resolve().then(() => handler(payload));
         }
     }
 
-    addMessageHandlerOnce(command, handler){
-        const _onceWrapper = (payload) =>{
+    addMessageHandlerOnce(command, handler) {
+        const _onceWrapper = (payload) => {
             this.removeMessageHandler(command, _onceWrapper);
             return handler(payload);
         };
-       
+
         this.addMessageHandler(command, _onceWrapper);
         return this;
     }

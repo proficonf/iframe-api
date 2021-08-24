@@ -9,7 +9,7 @@ const APP_ORIGIN = 'https://app.proficonf.com';
 const IFRAME_ALLOW_POLICIES = [
     'camera',
     'microphone',
-    'display-capture', 
+    'display-capture',
     'autoplay',
     'clipboard-write',
     'clipboard-read',
@@ -30,11 +30,11 @@ export class EmbeddedRoom {
             style
         },
         appOrigin
-    }){
+    }) {
         this._eventEmitter = new EventEmitter();
         this._rootElement = rootElement;
         this._meetingId = meetingId;
-        this._appOrigin  = appOrigin || APP_ORIGIN;
+        this._appOrigin = appOrigin || APP_ORIGIN;
         this._meetingUrl = this._buildUrl({
             user,
             meetingId,
@@ -47,23 +47,23 @@ export class EmbeddedRoom {
         });
     }
 
-    static create(...args){
+    static create(...args) {
         return new EmbeddedRoom(...args);
     }
 
-    join(){
+    join() {
         return Promise.resolve()
-            .then(()=> this._initializeIframe())
-            .then(()=> this._createIframeMessenger())
-            .then(()=> this._initCommandsBackend())
-            .then(()=> this._iframeMessenger.initialize())
-            .then(()=>{
+            .then(() => this._initializeIframe())
+            .then(() => this._createIframeMessenger())
+            .then(() => this._initCommandsBackend())
+            .then(() => this._iframeMessenger.initialize())
+            .then(() => {
                 const promise = new Promise((resolve, reject) => {
-                    const initializationTimeout = setTimeout(() =>{
+                    const initializationTimeout = setTimeout(() => {
                         reject(new Error('App initialization timeout'));
                     }, APP_INITIALIZATION_TIMEOUT_MS);
 
-                    this._iframeMessenger.addMessageHandlerOnce('app:ready', (payload)=>{
+                    this._iframeMessenger.addMessageHandlerOnce('app:ready', (payload) => {
                         resolve(payload);
                         clearTimeout(initializationTimeout);
                     });
@@ -73,112 +73,112 @@ export class EmbeddedRoom {
             });
     }
 
-    get iframeElement(){
+    get iframeElement() {
         return this._iframeElement;
     }
 
-    get rootElement(){
+    get rootElement() {
         return this._rootElement;
     }
 
-    enableCamera(constraints){
+    enableCamera(constraints) {
         return this._mediaSources.camera.enable(constraints);
     }
 
-    disableCamera(){
+    disableCamera() {
         return this._mediaSources.camera.disable();
     }
 
-    updateCamera(constraints){
+    updateCamera(constraints) {
         return this._mediaSources.camera.switch(constraints);
     }
 
-    getCameraState(){
+    getCameraState() {
         return this._mediaSources.camera.getState();
     }
 
-    enableMicrophone(constraints){
+    enableMicrophone(constraints) {
         return this._mediaSources.microphone.enable(constraints);
     }
 
-    disableMicrophone(){
+    disableMicrophone() {
         return this._mediaSources.microphone.disable();
     }
 
-    updateMicrophone(constraints){
+    updateMicrophone(constraints) {
         return this._mediaSources.microphone.switch(constraints);
     }
 
-    getMicrophoneState(){
+    getMicrophoneState() {
         return this._mediaSources.microphone.getState();
     }
 
-    enableScreenSharing(constraints){
+    enableScreenSharing(constraints) {
         return this._mediaSources.screenSharing.enable(constraints);
     }
 
-    disableScreenSharing(){
+    disableScreenSharing() {
         return this._mediaSources.screenSharing.disable();
     }
 
-    listAvailableDevices(){
+    listAvailableDevices() {
         return this._mediaSources.listAvailableDevices();
     }
 
-    updateScreenSharing(mediaTrack){
+    updateScreenSharing(mediaTrack) {
         return this._mediaSources.screenSharing.switch(mediaTrack);
     }
 
-    getParticipants(){
+    getParticipants() {
         return this._iframeMessenger.sendRequestToIframe('getParticipants');
     }
 
-    getParticipantById(id){
+    getParticipantById(id) {
         return this._iframeMessenger.sendRequestToIframe('getParticipantById', { id });
     }
 
-    blockParticipant(id){
+    blockParticipant(id) {
         return this._iframeMessenger.sendRequestToIframe('blockParticipant', { id });
     }
 
-    unblockParticipant(id){
+    unblockParticipant(id) {
         return this._iframeMessenger.sendRequestToIframe('unblockParticipant', { id });
     }
 
-    banParticipant(id){
+    banParticipant(id) {
         return this._iframeMessenger.sendRequestToIframe('banParticipant', { id });
     }
 
-    renameParticipant({ firstName, lastName }){
+    renameParticipant({ firstName, lastName }) {
         return this._iframeMessenger.sendRequestToIframe('renameParticipant', { firstName, lastName });
     }
 
-    toggleChat({ participantId, isChatAllowed }){
+    toggleChat({ participantId, isChatAllowed }) {
         return this._iframeMessenger.sendRequestToIframe(
             'toggleChat',
             { participantId, isChatAllowed }
         );
     }
 
-    on(event, listener){
+    on(event, listener) {
         this._eventEmitter.on(event, listener);
     }
 
-    once(event, listener){
+    once(event, listener) {
         this._eventEmitter.once(event, listener);
     }
 
-    removeEventListener(event, listener){
+    removeEventListener(event, listener) {
         this._eventEmitter.removeListener(event, listener);
     }
 
-    _initializeIframe(){
+    _initializeIframe() {
         this._rootElement.appendChild(this._iframeElement);
         return new IframeLoader(this._iframeElement)
             .loadUrl(this._meetingUrl);
     }
 
-    _createIframeMessenger(){
+    _createIframeMessenger() {
         this._iframeMessenger = new IframeMessenger({
             targetOrigin: this._appOrigin,
             targetWindow: this.iframeElement.contentWindow,
@@ -188,7 +188,7 @@ export class EmbeddedRoom {
         });
     }
 
-    _initCommandsBackend(){
+    _initCommandsBackend() {
         this._mediaSources = new MediaSourcesManager({ iframeMessenger: this._iframeMessenger });
         this._eventForwarder = new EventForwarder({
             iframeMessenger: this._iframeMessenger,
@@ -197,7 +197,7 @@ export class EmbeddedRoom {
         this._eventForwarder.initialize();
     }
 
-    _createIframeElement({ meetingId, width, height, style = {} }){
+    _createIframeElement({ meetingId, width, height, style = {} }) {
         const iframeId = `ProficonfEmbeddedRoom${meetingId}`;
         const iframe = document.createElement('iframe');
 
@@ -207,7 +207,7 @@ export class EmbeddedRoom {
         iframe.style.border = '0';
         iframe.setAttribute('allowFullScreen', 'true');
 
-        for(const [key, value] of Object.entries(style)){
+        for (const [key, value] of Object.entries(style)) {
             iframe.style[key] = value;
         }
 
@@ -217,16 +217,16 @@ export class EmbeddedRoom {
         return iframe;
     }
 
-    _buildUrl({ user, meetingId }){
+    _buildUrl({ user, meetingId }) {
         let url = `${this._appOrigin}/j/${meetingId}/?embedded=1&appOrigin=${encodeURIComponent(location.origin)}`;
 
-        if(user.token){
+        if (user.token) {
             url += `&userToken=${user.token}`;
         }
-        if(user.name){
+        if (user.name) {
             url += `&userName=${encodeURIComponent(user.name)}`;
         }
-        if(user.locale){
+        if (user.locale) {
             url += `&userLocale=${user.locale}`;
         }
 
