@@ -129,6 +129,37 @@ export class EmbeddedRoom {
         return this._mediaSources.screenSharing.switch(mediaTrack);
     }
 
+    getParticipants(){
+        return this._iframeMessenger.sendRequestToIframe('getParticipants');
+    }
+
+    getParticipantById(id){
+        return this._iframeMessenger.sendRequestToIframe('getParticipantById', { id });
+    }
+
+    blockParticipant(id){
+        return this._iframeMessenger.sendRequestToIframe('blockParticipant', { id });
+    }
+
+    unblockParticipant(id){
+        return this._iframeMessenger.sendRequestToIframe('unblockParticipant', { id });
+    }
+
+    banParticipant(id){
+        return this._iframeMessenger.sendRequestToIframe('banParticipant', { id });
+    }
+
+    renameParticipant({ firstName, lastName }){
+        return this._iframeMessenger.sendRequestToIframe('renameParticipant', { firstName, lastName });
+    }
+
+    toggleChat({ participantId, isChatAllowed }){
+        return this._iframeMessenger.sendRequestToIframe(
+            'toggleChat',
+            { participantId, isChatAllowed }
+        );
+    }
+
     on(event, listener){
         this._eventEmitter.on(event, listener);
     }
@@ -187,7 +218,7 @@ export class EmbeddedRoom {
     }
 
     _buildUrl({ user, meetingId }){
-        let url = `${this._appOrigin}/j/${meetingId}?embedded=1&appOrigin=${encodeURIComponent(location.origin)}`;
+        let url = `${this._appOrigin}/j/${meetingId}/?embedded=1&appOrigin=${encodeURIComponent(location.origin)}`;
 
         if(user.token){
             url += `&userToken=${user.token}`;
