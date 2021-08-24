@@ -125,10 +125,6 @@ export class EmbeddedRoom {
         return this._mediaSources.listAvailableDevices();
     }
 
-    updateScreenSharing(mediaTrack) {
-        return this._mediaSources.screenSharing.switch(mediaTrack);
-    }
-
     getParticipants() {
         return this._iframeMessenger.sendRequestToIframe('getParticipants');
     }
