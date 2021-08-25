@@ -4,7 +4,7 @@ const glob = require('glob');
 const TerserPlugin = require('terser-webpack-plugin');
 
 module.exports = (_, argv) => {
-    const isTesting = argv.test === 'true';
+    const isTesting = process.env.BABEL_ENV === 'test';
 
     const config = {
         entry: isTesting
