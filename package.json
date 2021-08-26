@@ -19,6 +19,7 @@
     "@babel/core": "7.15.0",
     "@babel/preset-env": "7.15.0",
     "@proficonf/eslint-config": "^1.0.0",
+    "@proficonf/utils": "2.8.1",
     "babel-loader": "8.2.2",
     "eslint": "7.0.0",
     "glob": "7.1.7",

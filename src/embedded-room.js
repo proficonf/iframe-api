@@ -1,9 +1,4 @@
-import { EventEmitter } from 'events';
-import { nanoid } from 'nanoid';
-import { IframeLoader } from './iframe-loader';
-import { IframeMessenger } from './iframe-messenger';
-import { MediaSourcesManager } from './media-sources/media-sources-manager';
-import { EventForwarder } from './event-forwarder';
+import { DependencyContainer } from './dependency-container';
 
 const APP_ORIGIN = 'https://app.proficonf.com';
 const IFRAME_ALLOW_POLICIES = [
@@ -18,7 +13,6 @@ const IFRAME_ALLOW_POLICIES = [
 const DEFAULT_WIDTH = '100%';
 const DEFAULT_HEIGHT = '100%';
 const APP_INITIALIZATION_TIMEOUT_MS = 60000;
-
 export class EmbeddedRoom {
     constructor({
         rootElement,
@@ -31,7 +25,7 @@ export class EmbeddedRoom {
         },
         appOrigin
     }) {
-        this._eventEmitter = new EventEmitter();
+        this._eventEmitter = DependencyContainer.get('eventEmitterFactory').create();
         this._rootElement = rootElement;
         this._meetingId = meetingId;
         this._appOrigin = appOrigin || APP_ORIGIN;
@@ -170,23 +164,25 @@ export class EmbeddedRoom {
 
     _initializeIframe() {
         this._rootElement.appendChild(this._iframeElement);
-        return new IframeLoader(this._iframeElement)
+        return DependencyContainer.get('iframeLoaderFactory').create(this._iframeElement)
             .loadUrl(this._meetingUrl);
     }
 
     _createIframeMessenger() {
-        this._iframeMessenger = new IframeMessenger({
+        this._iframeMessenger = DependencyContainer.get('iframeMessengerFactory').create({
             targetOrigin: this._appOrigin,
             targetWindow: this.iframeElement.contentWindow,
-            window,
-            nanoid,
+            window: DependencyContainer.get('window'),
+            nanoid: DependencyContainer.get('nanoid'),
             correlationId: this._meetingId
         });
     }
 
     _initCommandsBackend() {
-        this._mediaSources = new MediaSourcesManager({ iframeMessenger: this._iframeMessenger });
-        this._eventForwarder = new EventForwarder({
+        this._mediaSources = DependencyContainer.get('mediaSourcesFactory').create({
+            iframeMessenger: this._iframeMessenger
+        });
+        this._eventForwarder = DependencyContainer.get('eventForwarderFactory').create({
             iframeMessenger: this._iframeMessenger,
             eventEmitter: this._eventEmitter
         });
@@ -195,7 +191,7 @@ export class EmbeddedRoom {
 
     _createIframeElement({ meetingId, width, height, style = {} }) {
         const iframeId = `ProficonfEmbeddedRoom${meetingId}`;
-        const iframe = document.createElement('iframe');
+        const iframe = DependencyContainer.get('document').createElement('iframe');
 
         iframe.allow = IFRAME_ALLOW_POLICIES.join('; ');
         iframe.name = iframeId;
@@ -214,7 +210,7 @@ export class EmbeddedRoom {
     }
 
     _buildUrl({ user, meetingId }) {
-        let url = `${this._appOrigin}/j/${meetingId}/?embedded=1&appOrigin=${encodeURIComponent(location.origin)}`;
+        let url = `${this._appOrigin}/j/${meetingId}/?embedded=1`;
 
         if (user.token) {
             url += `&userToken=${user.token}`;

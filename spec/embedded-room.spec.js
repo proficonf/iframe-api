@@ -1,6 +1,6 @@
+import { EmbeddedRoom } from '../src/embedded-room';
 
 describe('EmbeddedRoom', ()=>{
-    it('x', ()=>{
-        expect(1).toBe(1);
-    });
+    let embeddedRoom;
+    
 });
