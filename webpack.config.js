@@ -61,8 +61,16 @@ module.exports = (_, argv) => {
                 new TerserPlugin({
                     parallel: true,
                     extractComments: true,
+                    terserOptions: {
+                        mangle: {
+                            properties: {
+                               regex: /^_/
+                             }
+                        }
+                    }
                 })
-            ]
+            ],
+            
         }
     };
     
