@@ -13,7 +13,7 @@ module.exports = (_, argv) => {
                     'iframe-api': './src/index.js',
                 },
         mode: 'development',
-        devtool: 'inline-source-map',
+        //devtool: 'inline-source-map',
         output: {
             path: path.resolve(__dirname, 'dist'),
             publicPath: '/',
@@ -61,13 +61,6 @@ module.exports = (_, argv) => {
                 new TerserPlugin({
                     parallel: true,
                     extractComments: true,
-                    terserOptions: {
-                        mangle: {
-                            properties: {
-                               regex: /^_/
-                             }
-                        }
-                    }
                 })
             ],
             

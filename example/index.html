@@ -14,7 +14,7 @@
             type="text"
             id="meetingUrl"
             placeholder="enter meetingUrl"
-            value="http://host.docker.internal:8000/j/3hPsGhLKYqH"
+            value=""
         />
         <button id="joinBtn">Join</button>
     </div>
@@ -34,7 +34,7 @@
 
 
         async function initializeRoom(appOrigin, meetingId) {
-            room = window.Proficonf.EmbeddedRoom.create({
+            room = Proficonf.EmbeddedRoom.create({
                 meetingId,
                 appOrigin,
                 rootElement: document.querySelector('div#iframeWrapper'),
