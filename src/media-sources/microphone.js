@@ -5,23 +5,23 @@ export class Microphone {
     }
 
     enable(constraints) {
-        return this._iframeMessenger.sendRequestToIframe('enableMicrophone', {
+        return this._iframeMessenger.sendRequest('enableMicrophone', {
             constraints
         });
     }
 
     disable() {
-        return this._iframeMessenger.sendRequestToIframe('disableMicrophone');
+        return this._iframeMessenger.sendRequest('disableMicrophone');
     }
 
     switch(constraints) {
-        return this._iframeMessenger.sendRequestToIframe(
+        return this._iframeMessenger.sendRequest(
             'updateMicrophoneDevice',
             { constraints }
         );
     }
 
     getState() {
-        return this._iframeMessenger.sendRequestToIframe('getMicrophoneState');
+        return this._iframeMessenger.sendRequest('getMicrophoneState');
     }
 }

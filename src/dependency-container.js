@@ -1,12 +1,10 @@
-export class DependencyContainer {
-    static dependencies = {};
-
-    static get(name){
-        return DependencyContainer.dependencies[name];
-    }
-
-    static set(name, value){
-        DependencyContainer.dependencies[name] = value;
+export const DependencyContainer  = {
+    _dependencies: {},
+    get(name){
+        return DependencyContainer._dependencies[name];
+    },
+    set(name, value){
+        DependencyContainer._dependencies[name] = value;
         return this;
     }
 }

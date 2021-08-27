@@ -5,23 +5,23 @@ export class Camera {
     }
 
     enable(constraints) {
-        return this._iframeMessenger.sendRequestToIframe('enableCamera', {
+        return this._iframeMessenger.sendRequest('enableCamera', {
             constraints
         });
     }
 
     disable() {
-        return this._iframeMessenger.sendRequestToIframe('disableCamera');
+        return this._iframeMessenger.sendRequest('disableCamera');
     }
 
     switch(constraints) {
-        return this._iframeMessenger.sendRequestToIframe(
+        return this._iframeMessenger.sendRequest(
             'updateCameraDevice',
             { constraints }
         );
     }
 
     getState() {
-        return this._iframeMessenger.sendRequestToIframe('getCameraState');
+        return this._iframeMessenger.sendRequest('getCameraState');
     }
 }

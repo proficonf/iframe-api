@@ -4,23 +4,23 @@ export class ScreenSharing {
     }
 
     enable(constraints) {
-        return this._iframeMessenger.sendRequestToIframe('enableScreenSharing', {
+        return this._iframeMessenger.sendRequest('enableScreenSharing', {
             constraints
         });
     }
 
     disable() {
-        return this._iframeMessenger.sendRequestToIframe('disableScreenSharing');
+        return this._iframeMessenger.sendRequest('disableScreenSharing');
     }
 
     switch(mediaTrack) {
-        return this._iframeMessenger.sendRequestToIframe(
+        return this._iframeMessenger.sendRequest(
             'updateScreenSharing',
             { mediaTrack }
         );
     }
 
     getState() {
-        return this._iframeMessenger.sendRequestToIframe('getScreenSharingState');
+        return this._iframeMessenger.sendRequest('getScreenSharingState');
     }
 }

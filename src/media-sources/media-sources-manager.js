@@ -12,7 +12,7 @@ export class MediaSourcesManager {
     }
 
     listAvailableDevices() {
-        return this._iframeMessenger.sendRequestToIframe('listAvailableDevices');
+        return this._iframeMessenger.sendRequest('listAvailableDevices');
     }
 
     get microphone() {

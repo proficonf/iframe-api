@@ -19,16 +19,16 @@ export class EmbeddedRoom {
         meetingId,
         user = {},
         iframe: {
-            width,
-            height,
-            style
-        },
-        appOrigin
+            width  = DEFAULT_WIDTH,
+            height = DEFAULT_HEIGHT,
+            style = {}
+        } = {},
+        appOrigin = APP_ORIGIN
     }) {
         this._eventEmitter = DependencyContainer.get('eventEmitterFactory').create();
         this._rootElement = rootElement;
         this._meetingId = meetingId;
-        this._appOrigin = appOrigin || APP_ORIGIN;
+        this._appOrigin = appOrigin;
         this._meetingUrl = this._buildUrl({
             user,
             meetingId,
@@ -46,6 +46,7 @@ export class EmbeddedRoom {
     }
 
     join() {
+        console.log(DependencyContainer);
         return Promise.resolve()
             .then(() => this._initializeIframe())
             .then(() => this._createIframeMessenger())
@@ -62,7 +63,7 @@ export class EmbeddedRoom {
                         clearTimeout(initializationTimeout);
                     });
                 });
-                this._iframeMessenger.sendMessageToIframe('initialize', {});
+                this._iframeMessenger.sendMessage('initialize', {});
                 return promise;
             });
     }
@@ -120,31 +121,31 @@ export class EmbeddedRoom {
     }
 
     getParticipants() {
-        return this._iframeMessenger.sendRequestToIframe('getParticipants');
+        return this._iframeMessenger.sendRequest('getParticipants');
     }
 
     getParticipantById(id) {
-        return this._iframeMessenger.sendRequestToIframe('getParticipantById', { id });
+        return this._iframeMessenger.sendRequest('getParticipantById', { id });
     }
 
     blockParticipant(id) {
-        return this._iframeMessenger.sendRequestToIframe('blockParticipant', { id });
+        return this._iframeMessenger.sendRequest('blockParticipant', { id });
     }
 
     unblockParticipant(id) {
-        return this._iframeMessenger.sendRequestToIframe('unblockParticipant', { id });
+        return this._iframeMessenger.sendRequest('unblockParticipant', { id });
     }
 
     banParticipant(id) {
-        return this._iframeMessenger.sendRequestToIframe('banParticipant', { id });
+        return this._iframeMessenger.sendRequest('banParticipant', { id });
     }
 
     renameParticipant({ firstName, lastName }) {
-        return this._iframeMessenger.sendRequestToIframe('renameParticipant', { firstName, lastName });
+        return this._iframeMessenger.sendRequest('renameParticipant', { firstName, lastName });
     }
 
     toggleChat({ participantId, isChatAllowed }) {
-        return this._iframeMessenger.sendRequestToIframe(
+        return this._iframeMessenger.sendRequest(
             'toggleChat',
             { participantId, isChatAllowed }
         );
@@ -158,7 +159,7 @@ export class EmbeddedRoom {
         this._eventEmitter.once(event, listener);
     }
 
-    removeEventListener(event, listener) {
+    removeListener(event, listener) {
         this._eventEmitter.removeListener(event, listener);
     }
 
@@ -169,7 +170,9 @@ export class EmbeddedRoom {
     }
 
     _createIframeMessenger() {
-        this._iframeMessenger = DependencyContainer.get('iframeMessengerFactory').create({
+        const factory = DependencyContainer.get('iframeMessengerFactory');
+
+        this._iframeMessenger = factory.create({
             targetOrigin: this._appOrigin,
             targetWindow: this.iframeElement.contentWindow,
             window: DependencyContainer.get('window'),
@@ -179,10 +182,13 @@ export class EmbeddedRoom {
     }
 
     _initCommandsBackend() {
-        this._mediaSources = DependencyContainer.get('mediaSourcesFactory').create({
+        const mediaSourcesFactory = DependencyContainer.get('mediaSourcesFactory');
+        const eventForwarderFactory = DependencyContainer.get('eventForwarderFactory');
+        
+        this._mediaSources = mediaSourcesFactory.create({
             iframeMessenger: this._iframeMessenger
         });
-        this._eventForwarder = DependencyContainer.get('eventForwarderFactory').create({
+        this._eventForwarder = eventForwarderFactory.create({
             iframeMessenger: this._iframeMessenger,
             eventEmitter: this._eventEmitter
         });
@@ -190,21 +196,21 @@ export class EmbeddedRoom {
     }
 
     _createIframeElement({ meetingId, width, height, style = {} }) {
-        const iframeId = `ProficonfEmbeddedRoom${meetingId}`;
-        const iframe = DependencyContainer.get('document').createElement('iframe');
+        const iframeId = `ProficonfEmbeddedRoom-${meetingId}`;
+        const document = DependencyContainer.get('document');
+        const iframe = document.createElement('iframe');
 
         iframe.allow = IFRAME_ALLOW_POLICIES.join('; ');
         iframe.name = iframeId;
         iframe.id = iframeId;
         iframe.style.border = '0';
-        iframe.setAttribute('allowFullScreen', 'true');
 
         for (const [key, value] of Object.entries(style)) {
             iframe.style[key] = value;
         }
 
-        iframe.style.width = width || DEFAULT_WIDTH;
-        iframe.style.height = height || DEFAULT_HEIGHT;
+        iframe.style.width = width;
+        iframe.style.height = height;
 
         return iframe;
     }

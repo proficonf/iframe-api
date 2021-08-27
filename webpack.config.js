@@ -13,14 +13,14 @@ module.exports = (_, argv) => {
                     'iframe-api': './src/index.js',
                 },
         mode: 'development',
-        //devtool: 'inline-source-map',
+        devtool: 'inline-source-map',
         output: {
             path: path.resolve(__dirname, 'dist'),
             publicPath: '/',
             filename: '[name].js',
             library: 'Proficonf',
             libraryTarget: 'umd',
-            globalObject: 'this'
+            globalObject: 'this',
         },
         plugins: [
             new HtmlWebpackPlugin({
@@ -56,7 +56,7 @@ module.exports = (_, argv) => {
             removeAvailableModules: true,
             removeEmptyChunks: true,
             splitChunks:  false,
-            minimize: true,
+            minimize: !isTesting,
             minimizer: [
                 new TerserPlugin({
                     parallel: true,

@@ -39,7 +39,7 @@ export class IframeMessenger {
         return this;
     }
 
-    sendMessageToIframe(command, payload) {
+    sendMessage(command, payload) {
         this._targetWindow.postMessage({
             command,
             payload,
@@ -47,7 +47,7 @@ export class IframeMessenger {
         }, this._targetOrigin);
     }
 
-    sendRequestToIframe(command, payload = {}) {
+    sendRequest(command, payload = {}) {
         return new Promise((resolve, reject) => {
             const commandId = this._nanoid();
             this.addMessageHandlerOnce(`re:${command}:${commandId}`, (payload) => {
@@ -57,7 +57,7 @@ export class IframeMessenger {
                 }
                 resolve(payload);
             });
-            this.sendMessageToIframe(command, {
+            this.sendMessage(command, {
                 commandId,
                 ...payload
             });
@@ -65,7 +65,7 @@ export class IframeMessenger {
     }
 
     sendReplyToIframeRequest(messageName, commandId, payload) {
-        this.sendMessageToIframe(
+        this.sendMessage(
             `re:${messageName}:${commandId}`,
             payload
         );
