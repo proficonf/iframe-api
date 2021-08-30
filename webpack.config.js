@@ -8,10 +8,10 @@ module.exports = (_, argv) => {
 
     const config = {
         entry: isTesting
-                ? glob.sync(__dirname + '/spec/**/*.spec.js')
-                : {
-                    'iframe-api': './src/index.js',
-                },
+            ? glob.sync(__dirname + '/spec/**/*.spec.js')
+            : {
+                'iframe-api': './src/index.js',
+            },
         mode: 'development',
         devtool: 'inline-source-map',
         output: {
@@ -32,18 +32,20 @@ module.exports = (_, argv) => {
             extensions: ['.js']
         },
         module: {
-            rules: [
-            {
-                test: /\.js$/,
-                exclude: /node_modules/,
-                use: {
-                loader: "babel-loader",
-                options: {
-                    presets: ['@babel/preset-env']
-                }
-                }
-            }
-            ]
+            rules: isTesting
+                ? []
+                : [
+                    {
+                        test: /\.js$/,
+                        exclude: /node_modules/,
+                        use: {
+                            loader: 'babel-loader',
+                            options: {
+                                presets: ['@babel/preset-env']
+                            }
+                        }
+                    }
+                ]
         },
         devServer: {
             static: {
@@ -63,9 +65,9 @@ module.exports = (_, argv) => {
                     extractComments: true,
                 })
             ],
-            
+
         }
     };
-    
+
     return config;
 };

@@ -17,5 +17,5 @@ DependencyContainer
     .set('document', document)
     .set('mediaSourcesFactory', SimpleFactory.for(MediaSourcesManager))
     .set('eventForwarderFactory', SimpleFactory.for(EventForwarder));
-    
+
 export { EmbeddedRoom };

@@ -19,7 +19,7 @@ export class EmbeddedRoom {
         meetingId,
         user = {},
         iframe: {
-            width  = DEFAULT_WIDTH,
+            width = DEFAULT_WIDTH,
             height = DEFAULT_HEIGHT,
             style = {}
         } = {},
@@ -46,7 +46,6 @@ export class EmbeddedRoom {
     }
 
     join() {
-        console.log(DependencyContainer);
         return Promise.resolve()
             .then(() => this._initializeIframe())
             .then(() => this._createIframeMessenger())
@@ -170,9 +169,7 @@ export class EmbeddedRoom {
     }
 
     _createIframeMessenger() {
-        const factory = DependencyContainer.get('iframeMessengerFactory');
-
-        this._iframeMessenger = factory.create({
+        this._iframeMessenger = DependencyContainer.get('iframeMessengerFactory').create({
             targetOrigin: this._appOrigin,
             targetWindow: this.iframeElement.contentWindow,
             window: DependencyContainer.get('window'),
@@ -182,13 +179,10 @@ export class EmbeddedRoom {
     }
 
     _initCommandsBackend() {
-        const mediaSourcesFactory = DependencyContainer.get('mediaSourcesFactory');
-        const eventForwarderFactory = DependencyContainer.get('eventForwarderFactory');
-        
-        this._mediaSources = mediaSourcesFactory.create({
+        this._mediaSources = DependencyContainer.get('mediaSourcesFactory').create({
             iframeMessenger: this._iframeMessenger
         });
-        this._eventForwarder = eventForwarderFactory.create({
+        this._eventForwarder = DependencyContainer.get('eventForwarderFactory').create({
             iframeMessenger: this._iframeMessenger,
             eventEmitter: this._eventEmitter
         });

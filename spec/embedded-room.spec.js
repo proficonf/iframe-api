@@ -2,7 +2,7 @@ import { DependencyContainer } from '../src/dependency-container';
 import { factoryMockHelper } from './setup';
 import { EmbeddedRoom } from '../src/embedded-room';
 
-describe('EmbeddedRoom', ()=>{
+describe('EmbeddedRoom', () => {
     let embeddedRoom;
     let eventEmitterFactory;
     let eventEmitter;
@@ -19,8 +19,13 @@ describe('EmbeddedRoom', ()=>{
     let document;
     let iframeElement;
     let rootElement;
+    const messageHandlers = new Map();
 
-    beforeEach(()=>{
+    function emitMessage(command, payload) {
+        return messageHandlers.get(command)(payload);
+    }
+
+    beforeEach(() => {
         eventEmitter = jasmine.createSpyObj('eventEmitter', ['on', 'removeListener', 'once']);
         eventEmitterFactory = factoryMockHelper.create(eventEmitter);
 
@@ -33,6 +38,10 @@ describe('EmbeddedRoom', ()=>{
             'sendMessage',
             'sendRequest',
         ]);
+        iframeMessenger.addMessageHandlerOnce.and.callFake((command, handler) => {
+            messageHandlers.set(command, handler);
+        });
+
         iframeMessengerFactory = factoryMockHelper.create(iframeMessenger);
 
         window = { stub: true };
@@ -135,40 +144,124 @@ describe('EmbeddedRoom', ()=>{
         });
     });
 
-    it('has iframeElement getter', ()=>{
+    it('has iframeElement getter', () => {
         expect(embeddedRoom.iframeElement).toBe(iframeElement);
     });
 
-    it('has rootElement getter', ()=>{
+    it('has rootElement getter', () => {
         expect(embeddedRoom.rootElement).toBe(rootElement);
     });
 
-    it('should allow to subscribe for events', ()=>{
+    it('should allow to subscribe for events', () => {
         embeddedRoom.on('x', 'y');
 
         expect(eventEmitter.on).toHaveBeenCalledOnceWith('x', 'y');
     });
 
-    it('should allow to subscribe for events once', ()=>{
+    it('should allow to subscribe for events once', () => {
         embeddedRoom.once('x', 'y');
 
         expect(eventEmitter.once).toHaveBeenCalledOnceWith('x', 'y');
     });
 
-    it('should allow to unsubscribe from events', ()=>{
+    it('should allow to unsubscribe from events', () => {
         embeddedRoom.removeListener('x', 'y');
 
         expect(eventEmitter.removeListener).toHaveBeenCalledOnceWith('x', 'y');
     });
 
-    describe('join()', ()=>{
-        it('should make iframe visible', (done)=>{
-            embeddedRoom.join()
-                .then(()=>{
-                    expect(rootElement.appendChild).toHaveBeenCalledOnceWith(iframeElement);
-                    done();
+    describe('join()', () => {
+        beforeAll(() => {
+            jasmine.clock().install().mockDate(new Date());
+        });
+
+        afterAll(() => {
+            jasmine.clock().uninstall();
+        });
+
+        beforeEach(() => {
+            iframeMessenger.sendMessage
+                .withArgs('initialize', {})
+                .and.callFake(() => emitMessage('app:ready', {}));
+        });
+
+        it('should make iframe visible', async () => {
+            await embeddedRoom.join();
+
+            expect(rootElement.appendChild).toHaveBeenCalledOnceWith(iframeElement);
+        });
+
+        it('should initialize iframeLoader', async () => {
+            await embeddedRoom.join();
+
+            expect(iframeLoaderFactory.create).toHaveBeenCalledOnceWith(iframeElement);
+        });
+
+        it('should load iframe url', async () => {
+            await embeddedRoom.join();
+
+            expect(iframeLoader.loadUrl).toHaveBeenCalledOnceWith(
+                'fake-app-origin/j/fake-meeting-id/?embedded=1&userName=fake-user-name&userLocale=fake-locale'
+            );
+        });
+
+        it('Should createe iframe messenger', async () => {
+            await embeddedRoom.join();
+
+            expect(iframeMessengerFactory.create).toHaveBeenCalledOnceWith({
+                targetOrigin: 'fake-app-origin',
+                targetWindow: iframeElement.contentWindow,
+                window,
+                nanoid,
+                correlationId: 'fake-meeting-id'
+            });
+        });
+
+        it('Should initialize media sources module', async () => {
+            await embeddedRoom.join();
+
+            expect(mediaSourcesFactory.create).toHaveBeenCalledOnceWith({
+                iframeMessenger
+            });
+        });
+
+        it('Should create eventForwarder', async () => {
+            await embeddedRoom.join();
+
+            expect(eventForwarderFactory.create).toHaveBeenCalledOnceWith({
+                iframeMessenger,
+                eventEmitter
+            });
+        });
+
+        it('Should initialize eventForwarder', async () => {
+            await embeddedRoom.join();
+
+            expect(eventForwarder.initialize).toHaveBeenCalledOnceWith();
+        });
+
+        it('Should initialize iframeMessenger', async () => {
+            await embeddedRoom.join();
+
+            expect(iframeMessenger.initialize).toHaveBeenCalledOnceWith();
+        });
+
+        it('Should send initialize command', async () => {
+            await embeddedRoom.join();
+
+            expect(iframeMessenger.sendMessage).toHaveBeenCalledOnceWith('initialize', {});
+        });
+
+        it('Should throw on initialization timeout', async () => {
+            iframeMessenger.sendMessage
+                .withArgs('initialize', {})
+                .and.callFake(() => {
+                    jasmine.clock().tick(70000);
                 });
 
+            await expectAsync(
+                embeddedRoom.join()
+            ).toBeRejectedWith(new Error('App initialization timeout'));
         });
     });
 });
