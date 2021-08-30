@@ -14,7 +14,7 @@ export class Microphone {
         return this._iframeMessenger.sendRequest('disableMicrophone');
     }
 
-    switch(constraints) {
+    update(constraints) {
         return this._iframeMessenger.sendRequest(
             'updateMicrophoneDevice',
             { constraints }

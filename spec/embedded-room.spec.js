@@ -48,9 +48,9 @@ describe('EmbeddedRoom', () => {
         nanoid = jasmine.createSpy('nanoid').and.returnValue('Fake-Id');
 
         mediaSources = {
-            camera: jasmine.createSpyObj('camera', ['enable', 'disable', 'switch', 'getState']),
-            screenSharing: jasmine.createSpyObj('camera', ['enable', 'disable', 'switch', 'getState']),
-            microphone: jasmine.createSpyObj('camera', ['enable', 'disable', 'switch', 'getState'])
+            camera: jasmine.createSpyObj('camera', ['enable', 'disable', 'update', 'getState']),
+            screenSharing: jasmine.createSpyObj('camera', ['enable', 'disable', 'update', 'getState']),
+            microphone: jasmine.createSpyObj('camera', ['enable', 'disable', 'update', 'getState'])
         };
         mediaSourcesFactory = factoryMockHelper.create(mediaSources);
 
@@ -262,6 +262,155 @@ describe('EmbeddedRoom', () => {
             await expectAsync(
                 embeddedRoom.join()
             ).toBeRejectedWith(new Error('App initialization timeout'));
+        });
+    });
+
+    describe('[joined]', ()=>{
+        beforeEach(() =>{
+            iframeMessenger.sendMessage
+                .withArgs('initialize', {})
+                .and.callFake(() => emitMessage('app:ready', {}));
+            return embeddedRoom.join();
+        });
+
+    
+        describe('enableCamera()', ()=>{
+            it('should enable camera', ()=>{
+                embeddedRoom.enableCamera('fake-constraints');
+
+                expect(mediaSources.camera.enable).toHaveBeenCalledOnceWith('fake-constraints');
+            });
+
+            it('should return result of command', () =>{
+                mediaSources.camera.enable.withArgs('fake-constraints')
+                    .and.returnValue('fake-result');
+
+                expect(embeddedRoom.enableCamera('fake-constraints')).toBe('fake-result');
+            });
+        });
+
+        describe('disableCamera()', ()=>{
+            it('should disable camera', ()=>{
+                embeddedRoom.disableCamera();
+
+                expect(mediaSources.camera.disable).toHaveBeenCalledOnceWith();
+            });
+
+            it('should return result of command', () =>{
+                mediaSources.camera.disable.and.returnValue('fake-result');
+
+                expect(embeddedRoom.disableCamera()).toBe('fake-result');
+            });
+        });
+
+        describe('updateCamera()', ()=>{
+            it('should update camera', ()=>{
+                embeddedRoom.updateCamera('fake-constraints');
+
+                expect(mediaSources.camera.update).toHaveBeenCalledOnceWith('fake-constraints');
+            });
+
+            it('should return result of command', () =>{
+                mediaSources.camera.update.withArgs('fake-constraints').and.returnValue('fake-result');
+
+                expect(embeddedRoom.updateCamera('fake-constraints')).toBe('fake-result');
+            });
+        });
+
+        describe('getCameraState()', ()=>{
+            it('should return camera state', () =>{
+                mediaSources.camera.getState.and.returnValue('fake-result');
+
+                expect(embeddedRoom.getCameraState()).toBe('fake-result');
+            });
+        });
+
+        describe('enableMicrophone()', ()=>{
+            it('should enable microphone', ()=>{
+                embeddedRoom.enableMicrophone('fake-constraints');
+
+                expect(mediaSources.microphone.enable).toHaveBeenCalledOnceWith('fake-constraints');
+            });
+
+            it('should return result of command', () =>{
+                mediaSources.microphone.enable.withArgs('fake-constraints')
+                    .and.returnValue('fake-result');
+
+                expect(embeddedRoom.enableMicrophone('fake-constraints')).toBe('fake-result');
+            });
+        });
+
+        describe('disableMicrophone()', ()=>{
+            it('should disable microphone', ()=>{
+                embeddedRoom.disableMicrophone();
+
+                expect(mediaSources.microphone.disable).toHaveBeenCalledOnceWith();
+            });
+
+            it('should return result of command', () =>{
+                mediaSources.microphone.disable.and.returnValue('fake-result');
+
+                expect(embeddedRoom.disableMicrophone()).toBe('fake-result');
+            });
+        });
+
+        describe('updateMicrophone()', ()=>{
+            it('should update microphone', ()=>{
+                embeddedRoom.updateMicrophone('fake-constraints');
+
+                expect(mediaSources.microphone.update).toHaveBeenCalledOnceWith('fake-constraints');
+            });
+
+            it('should return result of command', () =>{
+                mediaSources.microphone.update.withArgs('fake-constraints').and.returnValue('fake-result');
+
+                expect(embeddedRoom.updateMicrophone('fake-constraints')).toBe('fake-result');
+            });
+        });
+
+        describe('getMicrophoneState()', ()=>{
+            it('should return microphone state', () =>{
+                mediaSources.microphone.getState.and.returnValue('fake-result');
+
+                expect(embeddedRoom.getMicrophoneState()).toBe('fake-result');
+            });
+        });
+
+        describe('enableScreenSharing()', ()=>{
+            it('should enable screenSharing', ()=>{
+                embeddedRoom.enableScreenSharing('fake-constraints');
+
+                expect(mediaSources.screenSharing.enable).toHaveBeenCalledOnceWith('fake-constraints');
+            });
+
+            it('should return result of command', () =>{
+                mediaSources.screenSharing.enable.withArgs('fake-constraints')
+                    .and.returnValue('fake-result');
+
+                expect(embeddedRoom.enableScreenSharing('fake-constraints')).toBe('fake-result');
+            });
+        });
+
+        describe('disableScreenSharing()', ()=>{
+            it('should disable screenSharing', ()=>{
+                embeddedRoom.disableScreenSharing();
+
+                expect(mediaSources.screenSharing.disable).toHaveBeenCalledOnceWith();
+            });
+
+            it('should return result of command', () =>{
+                mediaSources.screenSharing.disable.and.returnValue('fake-result');
+
+                expect(embeddedRoom.disableScreenSharing()).toBe('fake-result');
+            });
+        });
+
+        describe('getScreenSharingState()', ()=>{
+            it('should return screenSharing state', () =>{
+                mediaSources.screenSharing.getState.and.returnValue('fake-result');
+
+                expect(embeddedRoom.getScreenSharingState()).toBe('fake-result');
+            });
         });
     });
 });

@@ -14,7 +14,7 @@ export class Camera {
         return this._iframeMessenger.sendRequest('disableCamera');
     }
 
-    switch(constraints) {
+    update(constraints) {
         return this._iframeMessenger.sendRequest(
             'updateCameraDevice',
             { constraints }

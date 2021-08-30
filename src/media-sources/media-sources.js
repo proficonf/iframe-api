@@ -2,7 +2,7 @@ import { Camera } from './camera';
 import { Microphone } from './microphone';
 import { ScreenSharing } from './screen-sharing';
 
-export class MediaSourcesManager {
+export class MediaSources {
     constructor({ iframeMessenger }) {
         this._iframeMessenger = iframeMessenger;
 

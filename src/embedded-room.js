@@ -84,7 +84,7 @@ export class EmbeddedRoom {
     }
 
     updateCamera(constraints) {
-        return this._mediaSources.camera.switch(constraints);
+        return this._mediaSources.camera.update(constraints);
     }
 
     getCameraState() {
@@ -100,7 +100,7 @@ export class EmbeddedRoom {
     }
 
     updateMicrophone(constraints) {
-        return this._mediaSources.microphone.switch(constraints);
+        return this._mediaSources.microphone.update(constraints);
     }
 
     getMicrophoneState() {
@@ -109,6 +109,10 @@ export class EmbeddedRoom {
 
     enableScreenSharing(constraints) {
         return this._mediaSources.screenSharing.enable(constraints);
+    }
+
+    getScreenSharingState() {
+        return this._mediaSources.screenSharing.getState();
     }
 
     disableScreenSharing() {
