@@ -76,51 +76,57 @@ export class EmbeddedRoom {
     }
 
     enableCamera(constraints) {
-        return this._mediaSources.camera.enable(constraints);
+        return this._iframeMessenger.sendRequest('enableCamera', {
+            constraints
+        });
     }
 
     disableCamera() {
-        return this._mediaSources.camera.disable();
+        return this._iframeMessenger.sendRequest('disableCamera');
     }
 
-    updateCamera(constraints) {
-        return this._mediaSources.camera.update(constraints);
+    updateCameraDevice(constraints) {
+        return this._iframeMessenger.sendRequest('updateCameraDevice', {
+            constraints
+        });
     }
 
     getCameraState() {
-        return this._mediaSources.camera.getState();
+        return this._iframeMessenger.sendRequest('getCameraState');
     }
 
     enableMicrophone(constraints) {
-        return this._mediaSources.microphone.enable(constraints);
+        return this._iframeMessenger.sendRequest('enableMicrophone', {
+            constraints
+        });
     }
 
     disableMicrophone() {
-        return this._mediaSources.microphone.disable();
+        return this._iframeMessenger.sendRequest('disableMicrophone');
     }
 
-    updateMicrophone(constraints) {
-        return this._mediaSources.microphone.update(constraints);
+    updateMicrophoneDevice(constraints) {
+        return this._iframeMessenger.sendRequest('updateMicrophoneDevice', {
+            constraints
+        });
     }
 
     getMicrophoneState() {
-        return this._mediaSources.microphone.getState();
+        return this._iframeMessenger.sendRequest('getMicrophoneState');
     }
 
     enableScreenSharing(constraints) {
-        return this._mediaSources.screenSharing.enable(constraints);
+        return this._iframeMessenger.sendRequest('enableScreenSharing', {
+            constraints
+        });
     }
 
     getScreenSharingState() {
-        return this._mediaSources.screenSharing.getState();
+        return this._iframeMessenger.sendRequest('getScreenSharingState');
     }
 
     disableScreenSharing() {
-        return this._mediaSources.screenSharing.disable();
-    }
-
-    listAvailableDevices() {
-        return this._mediaSources.listAvailableDevices();
+        return this._iframeMessenger.sendRequest('disableScreenSharing');
     }
 
     getParticipants() {
@@ -154,6 +160,42 @@ export class EmbeddedRoom {
         );
     }
 
+    muteParticipantMicrophone(participantId) {
+        return this._iframeMessenger.sendRequest('muteParticipantMicrophone', { id: participantId });
+    }
+
+    askToUnmuteMicrophone(participantId) {
+        return this._iframeMessenger.sendRequest('askToUnmuteMicrophone', { id: participantId });
+    }
+
+    blockParticipantMicrophone(participantId) {
+        return this._iframeMessenger.sendRequest('blockParticipantMicrophone', { id: participantId });
+    }
+
+    unblockParticipantMicrophone(participantId) {
+        return this._iframeMessenger.sendRequest('unblockParticipantMicrophone', { id: participantId });
+    }
+
+    muteParticipantCamera(participantId) {
+        return this._iframeMessenger.sendRequest('muteParticipantCamera', { id: participantId });
+    }
+
+    askToUnmuteCamera(participantId) {
+        return this._iframeMessenger.sendRequest('askToUnmuteCamera', { id: participantId });
+    }
+
+    blockParticipantCamera(participantId) {
+        return this._iframeMessenger.sendRequest('blockParticipantCamera', { id: participantId });
+    }
+
+    unblockParticipantCamera(participantId) {
+        return this._iframeMessenger.sendRequest('unblockParticipantCamera', { id: participantId });
+    }
+
+    setParticipantRole({ participantId, role }) {
+        return this._iframeMessenger.sendRequest('setParticipantRole', { id: participantId, role });
+    }
+
     on(event, listener) {
         this._eventEmitter.on(event, listener);
     }
@@ -183,9 +225,6 @@ export class EmbeddedRoom {
     }
 
     _initCommandsBackend() {
-        this._mediaSources = DependencyContainer.get('mediaSourcesFactory').create({
-            iframeMessenger: this._iframeMessenger
-        });
         this._eventForwarder = DependencyContainer.get('eventForwarderFactory').create({
             iframeMessenger: this._iframeMessenger,
             eventEmitter: this._eventEmitter

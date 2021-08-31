@@ -12,8 +12,6 @@ describe('EmbeddedRoom', () => {
     let iframeMessenger;
     let window;
     let nanoid;
-    let mediaSourcesFactory;
-    let mediaSources;
     let eventForwarderFactory;
     let eventForwarder;
     let document;
@@ -47,13 +45,6 @@ describe('EmbeddedRoom', () => {
         window = { stub: true };
         nanoid = jasmine.createSpy('nanoid').and.returnValue('Fake-Id');
 
-        mediaSources = {
-            camera: jasmine.createSpyObj('camera', ['enable', 'disable', 'update', 'getState']),
-            screenSharing: jasmine.createSpyObj('camera', ['enable', 'disable', 'update', 'getState']),
-            microphone: jasmine.createSpyObj('camera', ['enable', 'disable', 'update', 'getState'])
-        };
-        mediaSourcesFactory = factoryMockHelper.create(mediaSources);
-
         eventForwarder = jasmine.createSpyObj('eventForwarder', [
             'initialize'
         ]);
@@ -78,7 +69,6 @@ describe('EmbeddedRoom', () => {
             .set('nanoid', nanoid)
             .set('window', window)
             .set('document', document)
-            .set('mediaSourcesFactory', mediaSourcesFactory)
             .set('eventForwarderFactory', eventForwarderFactory);
 
         embeddedRoom = new EmbeddedRoom({
@@ -217,14 +207,6 @@ describe('EmbeddedRoom', () => {
             });
         });
 
-        it('Should initialize media sources module', async () => {
-            await embeddedRoom.join();
-
-            expect(mediaSourcesFactory.create).toHaveBeenCalledOnceWith({
-                iframeMessenger
-            });
-        });
-
         it('Should create eventForwarder', async () => {
             await embeddedRoom.join();
 
@@ -265,151 +247,222 @@ describe('EmbeddedRoom', () => {
         });
     });
 
-    describe('[joined]', ()=>{
-        beforeEach(() =>{
+    describe('[joined]', () => {
+        beforeEach(() => {
             iframeMessenger.sendMessage
                 .withArgs('initialize', {})
                 .and.callFake(() => emitMessage('app:ready', {}));
             return embeddedRoom.join();
         });
 
-    
-        describe('enableCamera()', ()=>{
-            it('should enable camera', ()=>{
-                embeddedRoom.enableCamera('fake-constraints');
+        async function testCommandProxy({ command, expectedRequestPayload = undefined, functionArguments = undefined }) {
+            it(`should proxy command: ${command}`, async () => {
+                const commandArguments = expectedRequestPayload
+                    ? [command, expectedRequestPayload]
+                    : [command];
+                iframeMessenger.sendRequest.withArgs(...commandArguments).and.resolveTo('fake-result');
 
-                expect(mediaSources.camera.enable).toHaveBeenCalledOnceWith('fake-constraints');
+                await expectAsync(embeddedRoom[command](functionArguments)).toBeResolvedTo('fake-result');
             });
+        }
 
-            it('should return result of command', () =>{
-                mediaSources.camera.enable.withArgs('fake-constraints')
-                    .and.returnValue('fake-result');
+        describe('getParticipants()', () => {
+            testCommandProxy({ command: 'getParticipants' });
+        });
 
-                expect(embeddedRoom.enableCamera('fake-constraints')).toBe('fake-result');
+        describe('getParticipantById()', () => {
+            testCommandProxy({
+                command: 'getParticipantById',
+                functionArguments: 'fake-id',
+                expectedRequestPayload: { id: 'fake-id' }
             });
         });
 
-        describe('disableCamera()', ()=>{
-            it('should disable camera', ()=>{
-                embeddedRoom.disableCamera();
-
-                expect(mediaSources.camera.disable).toHaveBeenCalledOnceWith();
-            });
-
-            it('should return result of command', () =>{
-                mediaSources.camera.disable.and.returnValue('fake-result');
-
-                expect(embeddedRoom.disableCamera()).toBe('fake-result');
+        describe('blockParticipant()', () => {
+            testCommandProxy({
+                command: 'blockParticipant',
+                functionArguments: 'fake-id',
+                expectedRequestPayload: { id: 'fake-id' }
             });
         });
 
-        describe('updateCamera()', ()=>{
-            it('should update camera', ()=>{
-                embeddedRoom.updateCamera('fake-constraints');
-
-                expect(mediaSources.camera.update).toHaveBeenCalledOnceWith('fake-constraints');
-            });
-
-            it('should return result of command', () =>{
-                mediaSources.camera.update.withArgs('fake-constraints').and.returnValue('fake-result');
-
-                expect(embeddedRoom.updateCamera('fake-constraints')).toBe('fake-result');
+        describe('unblockParticipant()', () => {
+            testCommandProxy({
+                command: 'unblockParticipant',
+                functionArguments: 'fake-id',
+                expectedRequestPayload: { id: 'fake-id' }
             });
         });
 
-        describe('getCameraState()', ()=>{
-            it('should return camera state', () =>{
-                mediaSources.camera.getState.and.returnValue('fake-result');
-
-                expect(embeddedRoom.getCameraState()).toBe('fake-result');
+        describe('banParticipant()', () => {
+            testCommandProxy({
+                command: 'banParticipant',
+                functionArguments: 'fake-id',
+                expectedRequestPayload: { id: 'fake-id' }
             });
         });
 
-        describe('enableMicrophone()', ()=>{
-            it('should enable microphone', ()=>{
-                embeddedRoom.enableMicrophone('fake-constraints');
-
-                expect(mediaSources.microphone.enable).toHaveBeenCalledOnceWith('fake-constraints');
-            });
-
-            it('should return result of command', () =>{
-                mediaSources.microphone.enable.withArgs('fake-constraints')
-                    .and.returnValue('fake-result');
-
-                expect(embeddedRoom.enableMicrophone('fake-constraints')).toBe('fake-result');
+        describe('renameParticipant()', () => {
+            testCommandProxy({
+                command: 'renameParticipant',
+                functionArguments: { firstName: 'fake-first-name', lastName: 'fake-last-name' },
+                expectedRequestPayload: { firstName: 'fake-first-name', lastName: 'fake-last-name' }
             });
         });
 
-        describe('disableMicrophone()', ()=>{
-            it('should disable microphone', ()=>{
-                embeddedRoom.disableMicrophone();
-
-                expect(mediaSources.microphone.disable).toHaveBeenCalledOnceWith();
-            });
-
-            it('should return result of command', () =>{
-                mediaSources.microphone.disable.and.returnValue('fake-result');
-
-                expect(embeddedRoom.disableMicrophone()).toBe('fake-result');
+        describe('toggleChat()', () => {
+            testCommandProxy({
+                command: 'toggleChat',
+                functionArguments: { participantId: 'fake-id', isChatAllowed: 'fake-is-chat-allowed', stub: true },
+                expectedRequestPayload: { participantId: 'fake-id', isChatAllowed: 'fake-is-chat-allowed' }
             });
         });
 
-        describe('updateMicrophone()', ()=>{
-            it('should update microphone', ()=>{
-                embeddedRoom.updateMicrophone('fake-constraints');
-
-                expect(mediaSources.microphone.update).toHaveBeenCalledOnceWith('fake-constraints');
-            });
-
-            it('should return result of command', () =>{
-                mediaSources.microphone.update.withArgs('fake-constraints').and.returnValue('fake-result');
-
-                expect(embeddedRoom.updateMicrophone('fake-constraints')).toBe('fake-result');
+        describe('muteParticipantMicrophone()', () => {
+            testCommandProxy({
+                command: 'muteParticipantMicrophone',
+                functionArguments: 'fake-id',
+                expectedRequestPayload: { id: 'fake-id' }
             });
         });
 
-        describe('getMicrophoneState()', ()=>{
-            it('should return microphone state', () =>{
-                mediaSources.microphone.getState.and.returnValue('fake-result');
-
-                expect(embeddedRoom.getMicrophoneState()).toBe('fake-result');
+        describe('askToUnmuteMicrophone()', () => {
+            testCommandProxy({
+                command: 'askToUnmuteMicrophone',
+                functionArguments: 'fake-id',
+                expectedRequestPayload: { id: 'fake-id' }
             });
         });
 
-        describe('enableScreenSharing()', ()=>{
-            it('should enable screenSharing', ()=>{
-                embeddedRoom.enableScreenSharing('fake-constraints');
-
-                expect(mediaSources.screenSharing.enable).toHaveBeenCalledOnceWith('fake-constraints');
-            });
-
-            it('should return result of command', () =>{
-                mediaSources.screenSharing.enable.withArgs('fake-constraints')
-                    .and.returnValue('fake-result');
-
-                expect(embeddedRoom.enableScreenSharing('fake-constraints')).toBe('fake-result');
+        describe('blockParticipantMicrophone()', () => {
+            testCommandProxy({
+                command: 'blockParticipantMicrophone',
+                functionArguments: 'fake-id',
+                expectedRequestPayload: { id: 'fake-id' }
             });
         });
 
-        describe('disableScreenSharing()', ()=>{
-            it('should disable screenSharing', ()=>{
-                embeddedRoom.disableScreenSharing();
-
-                expect(mediaSources.screenSharing.disable).toHaveBeenCalledOnceWith();
-            });
-
-            it('should return result of command', () =>{
-                mediaSources.screenSharing.disable.and.returnValue('fake-result');
-
-                expect(embeddedRoom.disableScreenSharing()).toBe('fake-result');
+        describe('unblockParticipantMicrophone()', () => {
+            testCommandProxy({
+                command: 'unblockParticipantMicrophone',
+                functionArguments: 'fake-id',
+                expectedRequestPayload: { id: 'fake-id' }
             });
         });
 
-        describe('getScreenSharingState()', ()=>{
-            it('should return screenSharing state', () =>{
-                mediaSources.screenSharing.getState.and.returnValue('fake-result');
+        describe('muteParticipantCamera()', () => {
+            testCommandProxy({
+                command: 'muteParticipantCamera',
+                functionArguments: 'fake-id',
+                expectedRequestPayload: { id: 'fake-id' }
+            });
+        });
 
-                expect(embeddedRoom.getScreenSharingState()).toBe('fake-result');
+        describe('askToUnmuteCamera()', () => {
+            testCommandProxy({
+                command: 'askToUnmuteCamera',
+                functionArguments: 'fake-id',
+                expectedRequestPayload: { id: 'fake-id' }
+            });
+        });
+
+        describe('blockParticipantCamera()', () => {
+            testCommandProxy({
+                command: 'blockParticipantCamera',
+                functionArguments: 'fake-id',
+                expectedRequestPayload: { id: 'fake-id' }
+            });
+        });
+
+        describe('unblockParticipantCamera()', () => {
+            testCommandProxy({
+                command: 'unblockParticipantCamera',
+                functionArguments: 'fake-id',
+                expectedRequestPayload: { id: 'fake-id' }
+            });
+        });
+
+        describe('setParticipantRole()', () => {
+            testCommandProxy({
+                command: 'setParticipantRole',
+                functionArguments: { participantId: 'fake-id', role: 'fake-role' },
+                expectedRequestPayload: { id: 'fake-id', role: 'fake-role' }
+            });
+        });
+
+        describe('enableCamera()', () => {
+            testCommandProxy({
+                command: 'enableCamera',
+                functionArguments: { stub: true },
+                expectedRequestPayload: { constraints: { stub: true } }
+            });
+        });
+
+        describe('disableCamera()', () => {
+            testCommandProxy({
+                command: 'disableCamera'
+            });
+        });
+
+        describe('updateCameraDevice()', () => {
+            testCommandProxy({
+                command: 'updateCameraDevice',
+                functionArguments: { stub: true },
+                expectedRequestPayload: { constraints: { stub: true } }
+            });
+        });
+
+        describe('getCameraState()', () => {
+            testCommandProxy({
+                command: 'getCameraState',
+            });
+        });
+
+        describe('enableMicrophone()', () => {
+            testCommandProxy({
+                command: 'enableMicrophone',
+                functionArguments: { stub: true },
+                expectedRequestPayload: { constraints: { stub: true } }
+            });
+        });
+
+        describe('updateMicrophoneDevice()', () => {
+            testCommandProxy({
+                command: 'updateMicrophoneDevice',
+                functionArguments: { stub: true },
+                expectedRequestPayload: { constraints: { stub: true } }
+            });
+        });
+
+        describe('disableMicrophone()', () => {
+            testCommandProxy({
+                command: 'disableMicrophone'
+            });
+        });
+
+        describe('getMicrophoneState()', () => {
+            testCommandProxy({
+                command: 'getMicrophoneState'
+            });
+        });
+
+        describe('enableScreenSharing()', () => {
+            testCommandProxy({
+                command: 'enableScreenSharing',
+                functionArguments: { stub: true },
+                expectedRequestPayload: { constraints: { stub: true } }
+            });
+        });
+
+        describe('getScreenSharingState()', () => {
+            testCommandProxy({
+                command: 'getScreenSharingState',
+            });
+        });
+
+        describe('disableScreenSharing()', () => {
+            testCommandProxy({
+                command: 'disableScreenSharing',
             });
         });
     });
