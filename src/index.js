@@ -1,4 +1,5 @@
 import SimpleFactory  from '@proficonf/utils/shared/SimpleFactory';
+import lzString from 'lz-string';
 import { EventEmitter } from 'events';
 import { nanoid } from 'nanoid';
 import { DependencyContainer } from './dependency-container';
@@ -6,6 +7,7 @@ import { IframeLoader } from './iframe-loader';
 import { IframeMessenger } from './iframe-messenger';
 import { EventForwarder } from './event-forwarder';
 import { EmbeddedRoom } from './embedded-room';
+import { InterfaceConfigSerializer } from './interface-config-serializer';
 
 DependencyContainer
     .set('eventEmitterFactory', SimpleFactory.for(EventEmitter))
@@ -14,6 +16,7 @@ DependencyContainer
     .set('nanoid', nanoid)
     .set('window', window)
     .set('document', document)
-    .set('eventForwarderFactory', SimpleFactory.for(EventForwarder));
+    .set('eventForwarderFactory', SimpleFactory.for(EventForwarder))
+    .set('interfaceConfigSerializer', new InterfaceConfigSerializer(lzString));
 
 export { EmbeddedRoom };

@@ -17,6 +17,7 @@ describe('EmbeddedRoom', () => {
     let document;
     let iframeElement;
     let rootElement;
+    let interfaceConfigSerializer;
     const messageHandlers = new Map();
 
     function emitMessage(command, payload) {
@@ -62,6 +63,9 @@ describe('EmbeddedRoom', () => {
 
         rootElement = jasmine.createSpyObj('root', ['appendChild']);
 
+        interfaceConfigSerializer = jasmine.createSpyObj('interfaceConfigSerializer', ['serializeToString']);
+        interfaceConfigSerializer.serializeToString.and.returnValue('fake-ui-config');
+
         DependencyContainer
             .set('eventEmitterFactory', eventEmitterFactory)
             .set('iframeLoaderFactory', iframeLoaderFactory)
@@ -69,6 +73,7 @@ describe('EmbeddedRoom', () => {
             .set('nanoid', nanoid)
             .set('window', window)
             .set('document', document)
+            .set('interfaceConfigSerializer', interfaceConfigSerializer)
             .set('eventForwarderFactory', eventForwarderFactory);
 
         embeddedRoom = new EmbeddedRoom({
@@ -83,6 +88,11 @@ describe('EmbeddedRoom', () => {
                 height: 'fake-height',
                 style: {
                     'fake-style-prop': 'fake-style-prop-value',
+                }
+            },
+            interfaceConfig: {
+                leftbar: {
+                    disabled: true
                 }
             },
             appOrigin: 'fake-app-origin'
@@ -173,6 +183,32 @@ describe('EmbeddedRoom', () => {
             iframeMessenger.sendMessage
                 .withArgs('initialize', {})
                 .and.callFake(() => emitMessage('app:ready', {}));
+
+            interfaceConfigSerializer.serializeToString.withArgs({
+                leftbar: {
+                    disabled: true,
+                },
+                topbar: {
+                    disabled: false,
+                    disableDeviceControls: false,
+                    disableCameraControl: false,
+                    disableMicrophoneControl: false,
+                    disableLeaveButton: false,
+                    disableMeetingName: false,
+                    disableRoomLocker: false,
+                    disableTimer: false,
+                    disableQualityIndicator: false,
+                    disableInviteButton: false,
+                    disableRecordingcontrol: false,
+                    disableStreamingControl: false,
+                    disableDisplayModeButton: false,
+                    disableConfigButton: false,
+                    disableLogo: false,
+                },
+                primaryColor: 'default',
+                logoSrc: 'default',
+                displayMode: 'default'
+            }).and.returnValue('fake-serialized-ui-config');
         });
 
         it('should make iframe visible', async () => {
@@ -191,7 +227,7 @@ describe('EmbeddedRoom', () => {
             await embeddedRoom.join();
 
             expect(iframeLoader.loadUrl).toHaveBeenCalledOnceWith(
-                'fake-app-origin/j/fake-meeting-id/?embedded=1&userName=fake-user-name&userLocale=fake-locale'
+                'fake-app-origin/j/fake-meeting-id/?embedded=1&userName=fake-user-name&userLocale=fake-locale&ui=fake-serialized-ui-config'
             );
         });
 
