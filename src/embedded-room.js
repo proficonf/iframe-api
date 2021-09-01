@@ -1,4 +1,5 @@
 import { DependencyContainer } from './dependency-container';
+import { DEFAULT_UI_CONFIG } from './default-ui-config';
 
 const APP_ORIGIN = 'https://app.proficonf.com';
 const IFRAME_ALLOW_POLICIES = [
@@ -12,36 +13,8 @@ const IFRAME_ALLOW_POLICIES = [
 ];
 const DEFAULT_WIDTH = '100%';
 const DEFAULT_HEIGHT = '100%';
-const APP_INITIALIZATION_TIMEOUT_MS = 60000;
-const DEFAULT_INTERFACE_CONFIG = {
-    leftbar: {
-        disabled: false,
-        disableChatbutton: false,
-        disableSharingCenter: false,
-        disableSharedFiles: false,
-        disableParticipantsList: false
-    },
-    topbar: {
-        disabled: false,
-        disableDeviceControls: false,
-        disableCameraControl: false,
-        disableMicrophoneControl: false,
-        disableLeaveButton: false,
-        disableMeetingName: false,
-        disableRoomLocker: false,
-        disableTimer: false,
-        disableQualityIndicator: false,
-        disableInviteButton: false,
-        disableRecordingcontrol: false,
-        disableStreamingControl: false,
-        disableDisplayModeButton: false,
-        disableConfigButton: false,
-        disableLogo: false,
-    },
-    primaryColor: 'default',
-    logoSrc: 'default',
-    displayMode: 'default'
-};
+const APP_INITIALIZATION_TIMEOUT_MS = 5 * 60 * 1000; // 5 minutes
+
 export class EmbeddedRoom {
     constructor({
         rootElement,
@@ -52,7 +25,7 @@ export class EmbeddedRoom {
             height = DEFAULT_HEIGHT,
             style = {}
         } = {},
-        interfaceConfig = {},
+        ui = {},
         appOrigin = APP_ORIGIN
     }) {
         this._eventEmitter = DependencyContainer.get('eventEmitterFactory').create();
@@ -62,7 +35,7 @@ export class EmbeddedRoom {
         this._meetingUrl = this._buildUrl({
             user,
             meetingId,
-            interfaceConfig: { ...DEFAULT_INTERFACE_CONFIG, ...interfaceConfig },
+            interfaceConfig: { ...DEFAULT_UI_CONFIG, ...ui },
         });
         this._iframeElement = this._createIframeElement({
             meetingId,

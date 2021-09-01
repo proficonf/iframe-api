@@ -1,0 +1,55 @@
+/**
+ * WARNING: Keep this order in sync with the similar order in the application source:
+ * @link 
+ */
+ export const UI_SERIALIZATION_ORDER = [
+    'disableLeftBar',
+    'disabletopBar',
+    'disableChatbutton',
+    'disableSharingCenterButton',
+    'disableSharedFilesButton',
+    'disableParticipantsListButton',
+    'disableDeviceControls',
+    'disableCameraControl',
+    'disableMicrophoneControl',
+    'disableLeaveButton',
+    'disableMeetingName',
+    'disableRoomLocker',
+    'disableTimer',
+    'disableQualityIndicator',
+    'disableInviteButton',
+    'disableRecordingControl',
+    'disableStreamingControl',
+    'disableDisplayModeButton',
+    'disableConfigButton',
+    'disableLogo',
+    'primaryColor',
+    'displayMode',
+    'logoSrc',
+];
+
+export const DEFAULT_UI_CONFIG = {
+    disableLeftBar: false,
+    disabletopBar: false,
+    disableChatbutton: false,
+    disableSharingCenterButton: false,
+    disableSharedFilesButton: false,
+    disableParticipantsListButton: false,
+    disableDeviceControls: false,
+    disableCameraControl: false,
+    disableMicrophoneControl: false,
+    disableLeaveButton: false,
+    disableMeetingName: false,
+    disableRoomLocker: false,
+    disableTimer: false,
+    disableQualityIndicator: false,
+    disableInviteButton: false,
+    disableRecordingControl: false,
+    disableStreamingControl: false,
+    disableDisplayModeButton: false,
+    disableConfigButton: false,
+    disableLogo: false,
+    primaryColor: 'default',
+    logoSrc: 'default',
+    displayMode: 'default'
+};

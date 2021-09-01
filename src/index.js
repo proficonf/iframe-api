@@ -8,6 +8,7 @@ import { IframeMessenger } from './iframe-messenger';
 import { EventForwarder } from './event-forwarder';
 import { EmbeddedRoom } from './embedded-room';
 import { InterfaceConfigSerializer } from './interface-config-serializer';
+import { UI_SERIALIZATION_ORDER } from './default-ui-config';
 
 DependencyContainer
     .set('eventEmitterFactory', SimpleFactory.for(EventEmitter))
@@ -17,6 +18,9 @@ DependencyContainer
     .set('window', window)
     .set('document', document)
     .set('eventForwarderFactory', SimpleFactory.for(EventForwarder))
-    .set('interfaceConfigSerializer', new InterfaceConfigSerializer(lzString));
+    .set('interfaceConfigSerializer', new InterfaceConfigSerializer({
+        lzString,
+        serializationOrder: UI_SERIALIZATION_ORDER,
+    }));
 
 export { EmbeddedRoom };
