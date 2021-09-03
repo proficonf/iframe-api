@@ -90,10 +90,8 @@ describe('EmbeddedRoom', () => {
                     'fake-style-prop': 'fake-style-prop-value',
                 }
             },
-            interfaceConfig: {
-                leftbar: {
-                    disabled: true
-                }
+            ui:{
+                disableLeftBar: 'fake-disable-left-bar'
             },
             appOrigin: 'fake-app-origin'
         });
@@ -185,26 +183,26 @@ describe('EmbeddedRoom', () => {
                 .and.callFake(() => emitMessage('app:ready', {}));
 
             interfaceConfigSerializer.serializeToString.withArgs({
-                leftbar: {
-                    disabled: true,
-                },
-                topbar: {
-                    disabled: false,
-                    disableDeviceControls: false,
-                    disableCameraControl: false,
-                    disableMicrophoneControl: false,
-                    disableLeaveButton: false,
-                    disableMeetingName: false,
-                    disableRoomLocker: false,
-                    disableTimer: false,
-                    disableQualityIndicator: false,
-                    disableInviteButton: false,
-                    disableRecordingcontrol: false,
-                    disableStreamingControl: false,
-                    disableDisplayModeButton: false,
-                    disableConfigButton: false,
-                    disableLogo: false,
-                },
+                disableLeftBar: 'fake-disable-left-bar',
+                disableTopBar: false,
+                disableChatbutton: false,
+                disableSharingCenterButton: false,
+                disableSharedFilesButton: false,
+                disableParticipantsListButton: false,
+                disableDeviceControls: false,
+                disableCameraControl: false,
+                disableMicrophoneControl: false,
+                disableLeaveButton: false,
+                disableMeetingName: false,
+                disableRoomLocker: false,
+                disableTimer: false,
+                disableQualityIndicator: false,
+                disableInviteButton: false,
+                disableRecordingControl: false,
+                disableStreamingControl: false,
+                disableDisplayModeButton: false,
+                disableConfigButton: false,
+                disableLogo: false,
                 primaryColor: 'default',
                 logoSrc: 'default',
                 displayMode: 'default'

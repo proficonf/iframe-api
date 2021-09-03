@@ -1,10 +1,10 @@
 /**
  * WARNING: Keep this order in sync with the similar order in the application source:
- * @link 
+ * @link frontend/app/modules/conferences/components/conference-ui/defaul-ui-config.js
  */
  export const UI_SERIALIZATION_ORDER = [
     'disableLeftBar',
-    'disabletopBar',
+    'disableTopBar',
     'disableChatbutton',
     'disableSharingCenterButton',
     'disableSharedFilesButton',
@@ -30,7 +30,7 @@
 
 export const DEFAULT_UI_CONFIG = {
     disableLeftBar: false,
-    disabletopBar: false,
+    disableTopBar: false,
     disableChatbutton: false,
     disableSharingCenterButton: false,
     disableSharedFilesButton: false,
