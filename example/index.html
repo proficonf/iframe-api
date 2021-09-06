@@ -25,6 +25,12 @@
 
         <button id="enableMicrophone">EnableMicrophone</button>
         <button id="disableMicrophone">DisableMicrophone</button>
+
+        <div>
+            <input type="color" id="primaryColor" name="primaryColor" />
+            <label for="primaryColor">PrimaryColor</label>
+        </div>
+        
     </div>
     <div id="iframeWrapper"></div>
 
@@ -47,9 +53,14 @@
                     height: '70vh',
                     style: {
                         border: '3px solid black',
-                        backgroundColor: 'grey'
+                        backgroundColor: 'grey',
+                        marginTop:'25px'
                     }
                 },
+                ui: {
+                    primaryColor: '#7cbae6',
+                    logoSrc: 'https://github.githubassets.com/images/modules/logos_page/Octocat.png'
+                }
             });
 
             room.on('*', (data) => {
@@ -67,9 +78,11 @@
 
                 const [origin, meetingId] = meetingUrl.split('/j/');
                 document.querySelector('#initForm').style.display = 'none';
-                document.querySelector('#screen').style.display = 'block';
+                
 
-                initializeRoom(origin, meetingId);
+                initializeRoom(origin, meetingId).then(() =>{
+                    document.querySelector('#screen').style.display = 'block';
+                });
             });
 
             document.querySelector('#enableCamera').addEventListener('click', ()=>{
@@ -86,6 +99,13 @@
             document.querySelector('#disableMicrophone').addEventListener('click', ()=>{
                 room.disableMicrophone();
             });
+
+            document.querySelector('#primaryColor').addEventListener('change', (event) =>{
+                room.updateUI({
+                    primaryColor: event.target.value,
+                    logoSrc: `https://i.pravatar.cc/150?u=${event.target.value.replace('#', 'x')}`
+                })
+            })
 
             window.room = room;
         })();

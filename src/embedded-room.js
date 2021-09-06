@@ -212,6 +212,13 @@ export class EmbeddedRoom {
         this._eventEmitter.removeListener(event, listener);
     }
 
+    updateUI(config){
+        return this._iframeMessenger.sendMessage('updateUIConfig', {
+            ...DEFAULT_UI_CONFIG,
+            ...config
+        });
+    }
+
     _initializeIframe() {
         this._rootElement.appendChild(this._iframeElement);
         return DependencyContainer.get('iframeLoaderFactory').create(this._iframeElement)
