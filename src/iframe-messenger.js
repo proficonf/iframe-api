@@ -51,6 +51,9 @@ export class IframeMessenger {
         return new Promise((resolve, reject) => {
             const commandId = this._nanoid();
             this.addMessageHandlerOnce(`re:${command}:${commandId}`, (payload) => {
+                if(!payload) {
+                    return;
+                }
                 if (payload.error) {
                     reject(payload.error);
                     return;
