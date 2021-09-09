@@ -64,7 +64,31 @@ describe('EmbeddedRoom', () => {
         rootElement = jasmine.createSpyObj('root', ['appendChild']);
 
         interfaceConfigSerializer = jasmine.createSpyObj('interfaceConfigSerializer', ['serializeToString']);
-        interfaceConfigSerializer.serializeToString.and.returnValue('fake-ui-config');
+        interfaceConfigSerializer.serializeToString.withArgs({
+            disableLeftBar: 'fake-disable-left-bar',
+            disableTopBar: false,
+            disableChatbutton: false,
+            disableSharingCenterButton: false,
+            disableSharedFilesButton: false,
+            disableParticipantsListButton: false,
+            disableDeviceControls: false,
+            disableCameraControl: false,
+            disableMicrophoneControl: false,
+            disableLeaveButton: false,
+            disableMeetingName: false,
+            disableRoomLocker: false,
+            disableTimer: false,
+            disableQualityIndicator: false,
+            disableInviteButton: false,
+            disableRecordingControl: false,
+            disableStreamingControl: false,
+            disableDisplayModeButton: false,
+            disableConfigButton: false,
+            disableLogo: false,
+            primaryColor: 'default',
+            logoSrc: 'default',
+            displayMode: 'default'
+        }).and.returnValue('fake-serialized-ui-config');
 
         DependencyContainer
             .set('eventEmitterFactory', eventEmitterFactory)
@@ -90,7 +114,7 @@ describe('EmbeddedRoom', () => {
                     'fake-style-prop': 'fake-style-prop-value',
                 }
             },
-            ui:{
+            ui: {
                 disableLeftBar: 'fake-disable-left-bar'
             },
             appOrigin: 'fake-app-origin'
@@ -132,6 +156,9 @@ describe('EmbeddedRoom', () => {
                         style: {
                             'fake-style-prop': 'fake-style-prop-value',
                         }
+                    },
+                    ui: {
+                        disableLeftBar: 'fake-disable-left-bar'
                     },
                     appOrigin: 'fake-app-origin'
                 });
@@ -181,32 +208,6 @@ describe('EmbeddedRoom', () => {
             iframeMessenger.sendMessage
                 .withArgs('initialize', {})
                 .and.callFake(() => emitMessage('app:ready', {}));
-
-            interfaceConfigSerializer.serializeToString.withArgs({
-                disableLeftBar: 'fake-disable-left-bar',
-                disableTopBar: false,
-                disableChatbutton: false,
-                disableSharingCenterButton: false,
-                disableSharedFilesButton: false,
-                disableParticipantsListButton: false,
-                disableDeviceControls: false,
-                disableCameraControl: false,
-                disableMicrophoneControl: false,
-                disableLeaveButton: false,
-                disableMeetingName: false,
-                disableRoomLocker: false,
-                disableTimer: false,
-                disableQualityIndicator: false,
-                disableInviteButton: false,
-                disableRecordingControl: false,
-                disableStreamingControl: false,
-                disableDisplayModeButton: false,
-                disableConfigButton: false,
-                disableLogo: false,
-                primaryColor: 'default',
-                logoSrc: 'default',
-                displayMode: 'default'
-            }).and.returnValue('fake-serialized-ui-config');
         });
 
         it('should make iframe visible', async () => {
@@ -272,7 +273,7 @@ describe('EmbeddedRoom', () => {
             iframeMessenger.sendMessage
                 .withArgs('initialize', {})
                 .and.callFake(() => {
-                    jasmine.clock().tick(70000);
+                    jasmine.clock().tick(300001);
                 });
 
             await expectAsync(
@@ -497,6 +498,111 @@ describe('EmbeddedRoom', () => {
         describe('disableScreenSharing()', () => {
             testCommandProxy({
                 command: 'disableScreenSharing',
+            });
+        });
+
+        describe('muteParticipantMicrophone()', () => {
+            testCommandProxy({
+                command: 'muteParticipantMicrophone',
+                functionArguments: 'fake-id',
+                expectedRequestPayload: { id: 'fake-id' }
+            });
+        });
+
+        describe('muteParticipantCamera()', () => {
+            testCommandProxy({
+                command: 'muteParticipantCamera',
+                functionArguments: 'fake-id',
+                expectedRequestPayload: { id: 'fake-id' }
+            });
+        });
+
+        describe('askToUnmuteMicrophone()', () => {
+            testCommandProxy({
+                command: 'askToUnmuteMicrophone',
+                functionArguments: 'fake-id',
+                expectedRequestPayload: { id: 'fake-id' }
+            });
+        });
+
+        describe('askToUnmuteCamera()', () => {
+            testCommandProxy({
+                command: 'askToUnmuteCamera',
+                functionArguments: 'fake-id',
+                expectedRequestPayload: { id: 'fake-id' }
+            });
+        });
+
+        describe('blockParticipantMicrophone()', () => {
+            testCommandProxy({
+                command: 'blockParticipantMicrophone',
+                functionArguments: 'fake-id',
+                expectedRequestPayload: { id: 'fake-id' }
+            });
+        });
+
+        describe('blockParticipantCamera()', () => {
+            testCommandProxy({
+                command: 'blockParticipantCamera',
+                functionArguments: 'fake-id',
+                expectedRequestPayload: { id: 'fake-id' }
+            });
+        });
+
+        describe('unblockParticipantCamera()', () => {
+            testCommandProxy({
+                command: 'unblockParticipantCamera',
+                functionArguments: 'fake-id',
+                expectedRequestPayload: { id: 'fake-id' }
+            });
+        });
+
+        describe('unblockParticipantMicrophone()', () => {
+            testCommandProxy({
+                command: 'unblockParticipantMicrophone',
+                functionArguments: 'fake-id',
+                expectedRequestPayload: { id: 'fake-id' }
+            });
+        });
+
+        describe('setParticipantRole()', () => {
+            testCommandProxy({
+                command: 'setParticipantRole',
+                functionArguments: { participantId: 'fake-id', role: 'fake-role' },
+                expectedRequestPayload: { id: 'fake-id', role: 'fake-role' }
+            });
+        });
+
+        describe('updateUIConfig()', () => {
+            testCommandProxy({
+                command: 'updateUIConfig',
+                functionArguments: { fake: true },
+                expectedRequestPayload: { 
+                    disableLeftBar: false,
+                    disableTopBar: false,
+                    disableChatbutton: false,
+                    disableSharingCenterButton: false,
+                    disableSharedFilesButton: false,
+                    disableParticipantsListButton: false,
+                    disableDeviceControls: false,
+                    disableCameraControl: false,
+                    disableMicrophoneControl: false,
+                    disableLeaveButton: false,
+                    disableMeetingName: false,
+                    disableRoomLocker: false,
+                    disableTimer: false,
+                    disableQualityIndicator: false,
+                    disableInviteButton: false,
+                    disableRecordingControl: false,
+                    disableStreamingControl: false,
+                    disableDisplayModeButton: false,
+                    disableConfigButton: false,
+                    disableLogo: false,
+                    primaryColor: 'default',
+                    logoSrc: 'default',
+                    displayMode: 'default',
+                    fake: true
+                }
             });
         });
     });

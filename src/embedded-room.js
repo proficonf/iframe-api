@@ -212,8 +212,8 @@ export class EmbeddedRoom {
         this._eventEmitter.removeListener(event, listener);
     }
 
-    updateUI(config){
-        return this._iframeMessenger.sendMessage('updateUIConfig', {
+    updateUIConfig(config) {
+        return this._iframeMessenger.sendRequest('updateUIConfig', {
             ...DEFAULT_UI_CONFIG,
             ...config
         });

@@ -7,18 +7,18 @@ export class InterfaceConfigSerializer {
     serializeToString(interfaceConfig) {
         const configValues = [];
 
-        for(const configKey of this._serializationOrder){
+        for (const configKey of this._serializationOrder) {
             let value = interfaceConfig[configKey];
 
-            if(String(value).toLowerCase() === 'true'){
+            if (String(value).toLowerCase() === 'true') {
                 value = 1;
             }
 
-            if(String(value).toLowerCase() === 'false'){
+            if (String(value).toLowerCase() === 'false') {
                 value = 0;
             }
 
-            configValues.push(interfaceConfig[configKey]);
+            configValues.push(value);
         }
 
         return this._lzString.compressToEncodedURIComponent(

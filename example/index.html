@@ -166,7 +166,7 @@
             document.querySelector('#primaryColor').addEventListener('change', (event) =>{
                 uiConfig.primaryColor = event.target.value;
                 uiConfig.logoSrc = `https://i.pravatar.cc/150?u=${event.target.value.replace('#', 'x')}`;
-                room.updateUI(uiConfig);
+                room.updateUIConfig(uiConfig);
             });
 
             document.querySelectorAll('.toggleUiElement').forEach(element =>{
@@ -181,7 +181,7 @@
                         event.target.classList.remove('active');
                     }
                     
-                    room.updateUI(uiConfig);
+                    room.updateUIConfig(uiConfig);
                 });
             })
 

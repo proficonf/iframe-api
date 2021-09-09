@@ -2,7 +2,7 @@
  * WARNING: Keep this order in sync with the similar order in the application source:
  * @link frontend/app/modules/conferences/components/conference-ui/defaul-ui-config.js
  */
- export const UI_SERIALIZATION_ORDER = [
+export const UI_SERIALIZATION_ORDER = [
     'disableLeftBar',
     'disableTopBar',
     'disableChatbutton',
