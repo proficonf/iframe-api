@@ -577,7 +577,7 @@ describe('EmbeddedRoom', () => {
             testCommandProxy({
                 command: 'updateUIConfig',
                 functionArguments: { fake: true },
-                expectedRequestPayload: { 
+                expectedRequestPayload: {
                     disableLeftBar: false,
                     disableTopBar: false,
                     disableChatbutton: false,
