@@ -1,0 +1,3 @@
+include:
+- project: 'proficonf/ci-tools'
+  file: '/pipelines/package.yml'
