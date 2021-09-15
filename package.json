@@ -33,7 +33,7 @@
   },
   "author": "Proficonf Ltd.",
   "license": "UNLICENSED",
-  "homepage": "https://github.com/proficonf/iframe-api",
+  "homepage": "https://github.com/proficonf/iframe-api#readme",
   "publishConfig": {
     "registry": "https://npm.pkg.github.com/"
   }
