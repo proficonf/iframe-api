@@ -1,5 +1,5 @@
 {
-  "name": "iframe-api",
+  "name": "@proficonf/iframe-api",
   "version": "0.1.0",
   "description": "Proficonf Embedded API",
   "main": "index.js",
