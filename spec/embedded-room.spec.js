@@ -226,7 +226,34 @@ describe('EmbeddedRoom', () => {
             await embeddedRoom.join();
 
             expect(iframeLoader.loadUrl).toHaveBeenCalledOnceWith(
-                'fake-app-origin/j/fake-meeting-id/?embedded=1&userName=fake-user-name&userLocale=fake-locale&ui=fake-serialized-ui-config'
+                'fake-app-origin/j/fake-meeting-id/?embedded=1&un=fake-user-name&ul=fake-locale&ui=fake-serialized-ui-config'
+            );
+        });
+
+        it('should use only user token when provided for url', async () => {
+            embeddedRoom = new EmbeddedRoom({
+                rootElement,
+                meetingId: 'fake-meeting-id',
+                user: {
+                    token: 'fake-token'
+                },
+                iframe: {
+                    width: 'fake-width',
+                    height: 'fake-height',
+                    style: {
+                        'fake-style-prop': 'fake-style-prop-value',
+                    }
+                },
+                ui: {
+                    disableLeftBar: 'fake-disable-left-bar'
+                },
+                appOrigin: 'fake-app-origin'
+            });
+
+            await embeddedRoom.join();
+
+            expect(iframeLoader.loadUrl).toHaveBeenCalledOnceWith(
+                'fake-app-origin/j/fake-meeting-id/?embedded=1&t=fake-token&ui=fake-serialized-ui-config'
             );
         });
 

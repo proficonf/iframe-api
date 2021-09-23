@@ -268,13 +268,10 @@ export class EmbeddedRoom {
         const serializedConfig = DependencyContainer.get('interfaceConfigSerializer').serializeToString(interfaceConfig);
 
         if (user.token) {
-            url += `&userToken=${user.token}`;
-        }
-        if (user.name) {
-            url += `&userName=${encodeURIComponent(user.name)}`;
-        }
-        if (user.locale) {
-            url += `&userLocale=${user.locale}`;
+            url += `&t=${user.token}`;
+        } else if (user.name) {
+            url += `&un=${encodeURIComponent(user.name)}`;
+            url += `&ul=${user.locale}`;
         }
 
         url += `&ui=${serializedConfig}`;
