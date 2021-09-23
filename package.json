@@ -1,5 +1,5 @@
 {
-  "name": "iframe-api",
+  "name": "@proficonf/iframe-api",
   "version": "0.1.0",
   "description": "Proficonf Embedded API",
   "main": "index.js",
@@ -13,8 +13,6 @@
     "lint": "eslint . --no-inline-config --ignore-path .gitignore",
     "lint:fix": "npm run lint -- --fix"
   },
-  "author": "",
-  "license": "ISC",
   "dependencies": {
     "@babel/core": "7.15.0",
     "@babel/plugin-transform-runtime": "^7.15.0",
@@ -32,5 +30,15 @@
     "webpack-cli": "4.8.0",
     "webpack-dev-server": "4.0.0",
     "lz-string": "1.4.4"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/proficonf/iframe-api.git"
+  },
+  "author": "Proficonf Ltd.",
+  "license": "UNLICENSED",
+  "homepage": "https://github.com/proficonf/iframe-api#readme",
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com/"
   }
 }
