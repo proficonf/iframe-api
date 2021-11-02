@@ -276,6 +276,10 @@ export class EmbeddedRoom {
 
         url += `&ui=${serializedConfig}`;
 
+        if(location.protocol !== 'https:' && location.protocol !== 'http:'){
+            url += '&skipAuth=1';
+        }
+
         return url;
     }
 }
