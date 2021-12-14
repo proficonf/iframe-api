@@ -85,13 +85,21 @@ export class EmbeddedRoom {
         });
     }
 
+    getDeviceList(){
+        return this._iframeMessenger.sendRequest('getDeviceList');
+    }
+
+    switchCamera(){
+        return this._iframeMessenger.sendRequest('switchCamera');
+    }
+
     disableCamera() {
         return this._iframeMessenger.sendRequest('disableCamera');
     }
 
-    updateCameraDevice(constraints) {
+    updateCameraDevice(deviceId) {
         return this._iframeMessenger.sendRequest('updateCameraDevice', {
-            constraints
+            deviceId
         });
     }
 
@@ -109,10 +117,14 @@ export class EmbeddedRoom {
         return this._iframeMessenger.sendRequest('disableMicrophone');
     }
 
-    updateMicrophoneDevice(constraints) {
+    updateMicrophoneDevice(deviceId) {
         return this._iframeMessenger.sendRequest('updateMicrophoneDevice', {
-            constraints
+            deviceId
         });
+    }
+
+    switchMicrophone(){
+        return this._iframeMessenger.sendRequest('switchMicrophone');
     }
 
     getMicrophoneState() {
@@ -198,6 +210,38 @@ export class EmbeddedRoom {
 
     setParticipantRole({ participantId, role }) {
         return this._iframeMessenger.sendRequest('setParticipantRole', { id: participantId, role });
+    }
+
+    setScreenLayout(layout) {
+        return this._iframeMessenger.sendRequest('setScreenLayout', { layout });
+    }
+
+    startMeeting() {
+        return this._iframeMessenger.sendRequest('startMeeting');
+    }
+
+    finishMeeting() {
+        return this._iframeMessenger.sendRequest('finishMeeting');
+    }
+
+    startRecording(uiState = null) {
+        return this._iframeMessenger.sendRequest('startRecording', { uiState });
+    }
+
+    setRecordingConfig(uiState) {
+        return this._iframeMessenger.sendRequest('setRecordingConfig', { uiState });
+    }
+
+    stopRecording() {
+        return this._iframeMessenger.sendRequest('stopRecording');
+    }
+
+    getRecordingState() {
+        return this._iframeMessenger.sendRequest('getRecordingState');
+    }
+
+    sendChatMessage(message) {
+        return this._iframeMessenger.sendRequest('sendChatMessage', { message });
     }
 
     on(event, listener) {

@@ -502,6 +502,24 @@ describe('EmbeddedRoom', () => {
             });
         });
 
+        describe('getDeviceList()', () => {
+            testCommandProxy({
+                command: 'getDeviceList'
+            });
+        });
+
+        describe('switchCamera()', () => {
+            testCommandProxy({
+                command: 'switchCamera'
+            });
+        });
+
+        describe('switchMicrophone()', () => {
+            testCommandProxy({
+                command: 'switchMicrophone'
+            });
+        });
+
         describe('getMicrophoneState()', () => {
             testCommandProxy({
                 command: 'getMicrophoneState'
@@ -597,6 +615,62 @@ describe('EmbeddedRoom', () => {
                 command: 'setParticipantRole',
                 functionArguments: { participantId: 'fake-id', role: 'fake-role' },
                 expectedRequestPayload: { id: 'fake-id', role: 'fake-role' }
+            });
+        });
+
+        describe('setScreenLayout()', () => {
+            testCommandProxy({
+                command: 'setScreenLayout',
+                functionArguments: 'fake-mode',
+                expectedRequestPayload: { layout: 'fake-mode' }
+            });
+        });
+
+        describe('startMeeting()', () => {
+            testCommandProxy({
+                command: 'startMeeting',
+            });
+        });
+
+        describe('finishMeeting()', () => {
+            testCommandProxy({
+                command: 'finishMeeting',
+            });
+        });
+
+        describe('startRecording()', () => {
+            testCommandProxy({
+                command: 'startRecording',
+                functionArguments: 'fake-ui-state',
+                expectedRequestPayload: { uiState: 'fake-ui-state' },
+            });
+        });
+
+        describe('setRecordingConfig()', () => {
+            testCommandProxy({
+                command: 'setRecordingConfig',
+                functionArguments: 'fake-ui-state',
+                expectedRequestPayload: { uiState: 'fake-ui-state' },
+            });
+        });
+
+        describe('stopRecording()', () => {
+            testCommandProxy({
+                command: 'stopRecording',
+            });
+        });
+
+        describe('getRecordingState()', () => {
+            testCommandProxy({
+                command: 'getRecordingState',
+            });
+        });
+
+        describe('sendChatMessage()', () => {
+            testCommandProxy({
+                command: 'sendChatMessage',
+                functionArguments: 'fake-message',
+                expectedRequestPayload: { message: 'fake-message' },
             });
         });
 
