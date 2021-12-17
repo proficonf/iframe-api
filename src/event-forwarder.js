@@ -14,7 +14,10 @@ export class EventForwarder {
     }
 
     _handleEvent({ eventName, payload }) {
-        this._eventEmitter.emit(eventName, payload);
+        this._eventEmitter.emit(eventName, {
+            type: eventName,
+            ...payload
+        });
         this._eventEmitter.emit('*', { eventName, payload });
     }
 }
