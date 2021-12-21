@@ -17,6 +17,7 @@ DependencyContainer
     .set('nanoid', nanoid)
     .set('window', window)
     .set('document', document)
+    .set('location', location)
     .set('eventForwarderFactory', SimpleFactory.for(EventForwarder))
     .set('interfaceConfigSerializer', new InterfaceConfigSerializer({
         lzString,

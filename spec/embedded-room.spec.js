@@ -98,7 +98,11 @@ describe('EmbeddedRoom', () => {
             .set('window', window)
             .set('document', document)
             .set('interfaceConfigSerializer', interfaceConfigSerializer)
-            .set('eventForwarderFactory', eventForwarderFactory);
+            .set('eventForwarderFactory', eventForwarderFactory)
+            .set('location', {
+                protocol: 'http:',
+                stub: true
+            });
 
         embeddedRoom = new EmbeddedRoom({
             rootElement,
@@ -469,8 +473,8 @@ describe('EmbeddedRoom', () => {
         describe('updateCameraDevice()', () => {
             testCommandProxy({
                 command: 'updateCameraDevice',
-                functionArguments: { stub: true },
-                expectedRequestPayload: { constraints: { stub: true } }
+                functionArguments: 'fake-device-id',
+                expectedRequestPayload: { deviceId: 'fake-device-id' }
             });
         });
 
@@ -491,8 +495,8 @@ describe('EmbeddedRoom', () => {
         describe('updateMicrophoneDevice()', () => {
             testCommandProxy({
                 command: 'updateMicrophoneDevice',
-                functionArguments: { stub: true },
-                expectedRequestPayload: { constraints: { stub: true } }
+                functionArguments: 'fake-device',
+                expectedRequestPayload: { deviceId: 'fake-device' }
             });
         });
 

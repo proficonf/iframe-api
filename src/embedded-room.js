@@ -85,11 +85,11 @@ export class EmbeddedRoom {
         });
     }
 
-    getDeviceList(){
+    getDeviceList() {
         return this._iframeMessenger.sendRequest('getDeviceList');
     }
 
-    switchCamera(){
+    switchCamera() {
         return this._iframeMessenger.sendRequest('switchCamera');
     }
 
@@ -123,7 +123,7 @@ export class EmbeddedRoom {
         });
     }
 
-    switchMicrophone(){
+    switchMicrophone() {
         return this._iframeMessenger.sendRequest('switchMicrophone');
     }
 
@@ -308,6 +308,7 @@ export class EmbeddedRoom {
     }
 
     _buildUrl({ user, meetingId, interfaceConfig }) {
+        const location = DependencyContainer.get('location');
         let url = `${this._appOrigin}/j/${meetingId}/?embedded=1`;
         const serializedConfig = DependencyContainer.get('interfaceConfigSerializer').serializeToString(interfaceConfig);
 
@@ -320,7 +321,7 @@ export class EmbeddedRoom {
 
         url += `&ui=${serializedConfig}`;
 
-        if(location.protocol !== 'https:' && location.protocol !== 'http:'){
+        if (location.protocol !== 'https:' && location.protocol !== 'http:') {
             url += '&skipAuth=1';
         }
 

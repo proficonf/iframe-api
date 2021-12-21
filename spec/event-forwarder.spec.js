@@ -52,10 +52,13 @@ describe('EventForwarder', () => {
 
             iframeMessenger.emitCommand('event', {
                 eventName: 'fake-event-name',
-                payload: 'fake-payload'
+                payload: { fake: 'value' }
             });
 
-            expect(spy).toHaveBeenCalledOnceWith('fake-payload');
+            expect(spy).toHaveBeenCalledOnceWith({
+                type: 'fake-event-name',
+                fake: 'value'
+            });
         });
 
         it('should forward event by asterisk', () => {
@@ -68,7 +71,7 @@ describe('EventForwarder', () => {
             });
 
             expect(spy).toHaveBeenCalledOnceWith({
-                eventName: 'fake-event-name',
+                type: 'fake-event-name',
                 payload: 'fake-payload'
             });
         });
