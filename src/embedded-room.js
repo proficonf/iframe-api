@@ -13,7 +13,7 @@ const IFRAME_ALLOW_POLICIES = [
 ];
 const DEFAULT_WIDTH = '100%';
 const DEFAULT_HEIGHT = '100%';
-const APP_INITIALIZATION_TIMEOUT_MS = 5 * 60 * 1000; // 5 minutes
+const APP_INITIALIZATION_TIMEOUT_MS = 60 * 1000; // 60 seconds to load conference
 
 export class EmbeddedRoom {
     constructor({
@@ -242,6 +242,18 @@ export class EmbeddedRoom {
 
     sendChatMessage(message) {
         return this._iframeMessenger.sendRequest('sendChatMessage', { message });
+    }
+
+    startStream({ serverUrl, streamKey }){
+        return this._iframeMessenger.sendRequest('startStream', { serverUrl, streamKey });
+    }
+
+    stopStream({ serverUrl, streamKey }){
+        return this._iframeMessenger.sendRequest('stopStream', { serverUrl, streamKey });
+    }
+
+    stopAllStreams(){
+        return this._iframeMessenger.sendRequest('stopAllStreams');
     }
 
     on(event, listener) {
