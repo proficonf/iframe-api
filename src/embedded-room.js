@@ -321,14 +321,17 @@ export class EmbeddedRoom {
 
     _buildUrl({ user, meetingId, interfaceConfig }) {
         const location = DependencyContainer.get('location');
-        let url = `${this._appOrigin}/j/${meetingId}/?embedded=1`;
+        const locale = user.locale
+            ? `${user.locale}/`
+            : '';
+
+        let url = `${this._appOrigin}/${locale}j/${meetingId}/?embedded=1`;
         const serializedConfig = DependencyContainer.get('interfaceConfigSerializer').serializeToString(interfaceConfig);
 
         if (user.token) {
             url += `&t=${user.token}`;
         } else if (user.name) {
             url += `&un=${encodeURIComponent(user.name)}`;
-            url += `&ul=${user.locale}`;
         }
 
         url += `&ui=${serializedConfig}`;

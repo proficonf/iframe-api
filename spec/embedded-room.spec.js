@@ -230,7 +230,7 @@ describe('EmbeddedRoom', () => {
             await embeddedRoom.join();
 
             expect(iframeLoader.loadUrl).toHaveBeenCalledOnceWith(
-                'fake-app-origin/j/fake-meeting-id/?embedded=1&un=fake-user-name&ul=fake-locale&ui=fake-serialized-ui-config'
+                'fake-app-origin/fake-locale/j/fake-meeting-id/?embedded=1&un=fake-user-name&ui=fake-serialized-ui-config'
             );
         });
 
