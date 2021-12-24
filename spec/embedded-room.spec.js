@@ -714,16 +714,16 @@ describe('EmbeddedRoom', () => {
         describe('startStream()', () => {
             testCommandProxy({
                 command: 'startStream',
-                functionArguments: { serverUrl: 'fake-server-url', streamKey: 'fake-stream-key'},
-                expectedRequestPayload: { serverUrl: 'fake-server-url', streamKey: 'fake-stream-key'},
+                functionArguments: { serverUrl: 'fake-server-url', streamKey: 'fake-stream-key' },
+                expectedRequestPayload: { serverUrl: 'fake-server-url', streamKey: 'fake-stream-key' },
             });
         });
 
         describe('stopStream()', () => {
             testCommandProxy({
                 command: 'stopStream',
-                functionArguments: { serverUrl: 'fake-server-url', streamKey: 'fake-stream-key'},
-                expectedRequestPayload: { serverUrl: 'fake-server-url', streamKey: 'fake-stream-key'},
+                functionArguments: { serverUrl: 'fake-server-url', streamKey: 'fake-stream-key' },
+                expectedRequestPayload: { serverUrl: 'fake-server-url', streamKey: 'fake-stream-key' },
             });
         });
 

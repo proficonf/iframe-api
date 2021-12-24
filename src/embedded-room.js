@@ -244,15 +244,15 @@ export class EmbeddedRoom {
         return this._iframeMessenger.sendRequest('sendChatMessage', { message });
     }
 
-    startStream({ serverUrl, streamKey }){
+    startStream({ serverUrl, streamKey }) {
         return this._iframeMessenger.sendRequest('startStream', { serverUrl, streamKey });
     }
 
-    stopStream({ serverUrl, streamKey }){
+    stopStream({ serverUrl, streamKey }) {
         return this._iframeMessenger.sendRequest('stopStream', { serverUrl, streamKey });
     }
 
-    stopAllStreams(){
+    stopAllStreams() {
         return this._iframeMessenger.sendRequest('stopAllStreams');
     }
 
