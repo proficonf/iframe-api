@@ -5,6 +5,7 @@ const TerserPlugin = require('terser-webpack-plugin');
 
 module.exports = (_, argv) => {
     const isTesting = process.env.BABEL_ENV === 'test';
+    const isDev = process.env.NODE_ENV === 'development';
 
     const config = {
         entry: isTesting
@@ -13,7 +14,9 @@ module.exports = (_, argv) => {
                 'iframe-api': './src/index.js',
             },
         mode: 'development',
-        devtool: 'inline-source-map',
+        devtool: isDev 
+            ? 'inline-source-map'
+            : false,
         output: {
             path: path.resolve(__dirname, 'dist'),
             publicPath: '/',
