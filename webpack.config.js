@@ -14,7 +14,7 @@ module.exports = (_, argv) => {
                 'iframe-api': './src/index.js',
             },
         mode: 'development',
-        devtool: isDev 
+        devtool: isDev
             ? 'inline-source-map'
             : false,
         output: {
