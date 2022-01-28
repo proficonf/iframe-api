@@ -724,9 +724,10 @@ await room.stopAllStreams();
 
 ### room.on(eventName, callback)
 
-Listen for meeting event. 
-Available events:
 
+### Events
+
+Available events list
 ```ts
 enum MeetingEvent {
     MEETING_STATE_CHANGED = 'meetingStateChanged';
@@ -749,6 +750,155 @@ enum MeetingEvent {
     GET_USER_MEDIA_ERROR = 'getUserMediaError';
 }
 
+```
+
+#### room.on('meetingStateChanged', event => {})
+
+Emitted when meeting state is changed: started or finished.
+
+```ts
+interface MeetingStateChangedEvent {
+    type: 'meetingStateChanged';
+    state: 'started' | 'finished';
+}
+```
+
+#### room.on('meetingPropertyChanged', event => {})
+
+Emitted when meeting property is changed.
+
+```ts
+enum MeetingProperty {
+    pinParticipantPolicy = 'pinParticipant',
+    joinRequestPolicy = 'joinRequest',
+    chatPolicy = 'chat',
+    sharingAccessPolicy = 'sharingAccess',
+    sharingPrivilegePolicy = 'sharingPrivilege',
+    joinBeforeStartRole = 'joinBeforeStartRole',
+    screenLayout = 'screenLayout',
+    startPolicy = 'startPolicy',
+    defaultParticipantRole = 'defaultParticipantRole',
+    recordingAutostartPolicy = 'recordingAutostart',
+    allowStartBeforePolicy = 'allowStartBefore',
+    thankYouPage = 'thankYouPage',
+}
+
+interface MeetingPropertyChangedEvent {
+    type: 'meetingPropertyChanged';
+    propertyName: MeetingProperty;
+    value: string;
+    previousValue: string;
+}
+```
+
+#### room.on('participantPropertyChanged', event => {})
+
+Emitted when participant property is changed. Participant properties include custom participant key-value pairs from participant presence.
+
+```ts
+enum ParticipantProperty {
+    role = 'role';
+    isBlocked = 'isBlocked';
+    avatar = 'avatar';
+    file = 'file';
+    ...
+}
+
+interface ParticipantPropertyChangedEvent {
+    type: 'participantPropertyChanged';
+    propertyName: ParticipantProperty;
+    value: string;
+    previousValue: string;
+    participant: MeetingParticipant;
+}
+```
+
+#### room.on('participantRoleChanged', event => {})
+
+Emitted when participant role is changed.
+
+```ts
+
+interface ParticipantRoleChangedEvent {
+    type: 'participantRoleChanged';
+    role: ParticipantRole;
+    previousRole: ParticipantRole | null;
+    participant: MeetingParticipant;
+}
+```
+
+#### room.on('participantJoined', event => {})
+
+Emitted when participant joins a conference.
+
+```ts
+
+interface ParticipantJoinedEvent {
+    type: 'participantJoined';
+    participant: MeetingParticipant;
+}
+```
+
+#### room.on('participantLeft', event => {})
+
+Emitted when participant leaves a conference.
+
+```ts
+
+interface ParticipantLeftEvent {
+    type: 'participantLeft';
+    participant: MeetingParticipant;
+}
+```
+
+#### room.on('permissionsChanged', event => {})
+
+Emitted when permissions of local participant are changed
+
+```ts
+enum MeetingPermissions {
+    INVITE = 'event:inviteParticipants',
+    JOIN = 'event:conference:join',
+    MUTE = 'event:conference:mute',
+    BAN = 'event:conference:ban',
+    STREAM_AUDIO = 'event:conference:streamAudio',
+    STREAM_VIDEO = 'event:conference:streamVideo',
+    INVITE_GUESTS = 'event:conference:inviteGuestUsers',
+    CLEAR_CHAT = 'event:conference:clearChat',
+    TOGGLE_CHAT = 'event:conference:toggleChat',
+    USE_CHAT = 'event:conference:useChat',
+    SEND_JOIN_REQUEST = 'event:conference:sendJoinRequest',
+    START_UNMUTED = 'event:conference.startUnmuted',
+    START_CONFERENCE = 'event:conference:start',
+    STOP_CONFERENCE = 'event:conference:stop',
+    GRANT_ROLE = 'event:conference:grantRole',
+    SET_CONFERENCE_TYPE ='event:conference:setConferenceType',
+    SET_CONFERENCE_ACCESS_LEVEL = 'event:conference:setConferenceState',
+    SET_CONFERENCE_HOST = 'event:conference:setConferenceHost',
+    SET_CONFERENCE_PROPERTY = 'event:conference:setProperty',
+    SET_CONFERENCE_SCREEN_LAYOUT = 'event:conference:setConferenceScreenLayout',
+    RENAME_CONFERENCE ='event:conference:rename',
+    HOST_CONFERENCE ='event:conference:hostConference',
+    USE_SHARING = 'event:conference:sharing',
+    OVERSHARE = 'event:conference:sharing:overshare',
+    PIN_PARTICIPANTS = 'event:conference:pinParticipants',
+    ACCEPT_RAISED_HAND = 'event:conference:acceptRaisedHand',
+    RAISE_HAND = 'event:conference:raiseHand',
+    DELETE_MESSAGE = 'event:conference:deleteMessage',
+    BLOCK_PARTICIPANT = 'event:conference:blockParticipant',
+    ACCESS_FILE_RECORDING = 'event:conference:capturer:fileRecording:access',
+    CONTROL_FILE_RECORDING = 'event:conference:capturer:fileRecording:control',
+    ACCESS_STREAMING = 'event:conference:capturer:streaming:access',
+    CONTROL_STREAMING = 'event:conference:capturer:streaming:control',
+    RENAME_PARTICIPANT = 'event:conference:renameParticipant',
+    READ_FROM_APP_STORAGE = 'event:conference:readFromAppStorage',
+    WRITE_TO_APP_STORAGE = 'event:conference:writeToAppStorage'
+}
+
+interface PermissionsChangedEvent {
+    type: 'permissionsChanged';
+    permissions: MeetingPermission[];
+}
 ```
 
 Example: 
