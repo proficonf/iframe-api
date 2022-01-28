@@ -10,11 +10,11 @@ export class InterfaceConfigSerializer {
         for (const configKey of this._serializationOrder) {
             let value = interfaceConfig[configKey];
 
-            if (String(value).toLowerCase() === 'true') {
+            if (value === true) {
                 value = 1;
             }
 
-            if (String(value).toLowerCase() === 'false') {
+            if (value === false) {
                 value = 0;
             }
 
