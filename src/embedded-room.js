@@ -1,7 +1,7 @@
 import { DependencyContainer } from './dependency-container';
 import { DEFAULT_UI_CONFIG } from './default-ui-config';
+const MEETING_ALIAS_PATTERN = /\/j\/([a-zA-Z0-9-_]+)/;
 
-const APP_ORIGIN = 'https://app.proficonf.com';
 const IFRAME_ALLOW_POLICIES = [
     'camera',
     'microphone',
@@ -11,14 +11,15 @@ const IFRAME_ALLOW_POLICIES = [
     'clipboard-read',
     'fullscreen',
 ];
-const DEFAULT_WIDTH = '100%';
-const DEFAULT_HEIGHT = '100%';
+const DEFAULT_WIDTH = '640px';
+const DEFAULT_HEIGHT = '450px';
 const APP_INITIALIZATION_TIMEOUT_MS = 60 * 1000; // 60 seconds to load conference
+const DEFAULT_USER_LOCALE = 'en';
 
-export class EmbeddedRoom {
+export class Proficonf {
     constructor({
-        rootElement,
-        meetingId,
+        rootElement = document.body,
+        meetingUrl,
         user = {},
         iframe: {
             width = DEFAULT_WIDTH,
@@ -26,19 +27,17 @@ export class EmbeddedRoom {
             style = {}
         } = {},
         ui = {},
-        appOrigin = APP_ORIGIN
     }) {
+        const aliasMatch = MEETING_ALIAS_PATTERN.exec(meetingUrl);
+        this._meetingId = aliasMatch && aliasMatch[1];
         this._eventEmitter = DependencyContainer.get('eventEmitterFactory').create();
         this._rootElement = rootElement;
-        this._meetingId = meetingId;
-        this._appOrigin = appOrigin;
         this._meetingUrl = this._buildUrl({
             user,
-            meetingId,
+            meetingUrl,
             interfaceConfig: { ...DEFAULT_UI_CONFIG, ...ui },
         });
         this._iframeElement = this._createIframeElement({
-            meetingId,
             width,
             height,
             style
@@ -46,7 +45,7 @@ export class EmbeddedRoom {
     }
 
     static create(...args) {
-        return new EmbeddedRoom(...args);
+        return new Proficonf(...args);
     }
 
     join() {
@@ -97,8 +96,8 @@ export class EmbeddedRoom {
         return this._iframeMessenger.sendRequest('disableCamera');
     }
 
-    updateCameraDevice(deviceId) {
-        return this._iframeMessenger.sendRequest('updateCameraDevice', {
+    setCameraDevice(deviceId) {
+        return this._iframeMessenger.sendRequest('setCameraDevice', {
             deviceId
         });
     }
@@ -117,8 +116,8 @@ export class EmbeddedRoom {
         return this._iframeMessenger.sendRequest('disableMicrophone');
     }
 
-    updateMicrophoneDevice(deviceId) {
-        return this._iframeMessenger.sendRequest('updateMicrophoneDevice', {
+    setMicrophoneDevice(deviceId) {
+        return this._iframeMessenger.sendRequest('setMicrophoneDevice', {
             deviceId
         });
     }
@@ -131,8 +130,8 @@ export class EmbeddedRoom {
         return this._iframeMessenger.sendRequest('getMicrophoneState');
     }
 
-    enableScreenSharing(constraints) {
-        return this._iframeMessenger.sendRequest('enableScreenSharing', {
+    startScreenSharing(constraints) {
+        return this._iframeMessenger.sendRequest('startScreenSharing', {
             constraints
         });
     }
@@ -141,8 +140,8 @@ export class EmbeddedRoom {
         return this._iframeMessenger.sendRequest('getScreenSharingState');
     }
 
-    disableScreenSharing() {
-        return this._iframeMessenger.sendRequest('disableScreenSharing');
+    stopScreenSharing() {
+        return this._iframeMessenger.sendRequest('stopScreenSharing');
     }
 
     getParticipants() {
@@ -169,19 +168,19 @@ export class EmbeddedRoom {
         return this._iframeMessenger.sendRequest('renameParticipant', { firstName, lastName });
     }
 
-    toggleChat({ participantId, isChatAllowed }) {
+    setChatState({ participantId, isChatAllowed }) {
         return this._iframeMessenger.sendRequest(
-            'toggleChat',
+            'setChatState',
             { participantId, isChatAllowed }
         );
     }
 
-    muteParticipantMicrophone(participantId) {
-        return this._iframeMessenger.sendRequest('muteParticipantMicrophone', { id: participantId });
+    disableParticipantMicrophone(participantId) {
+        return this._iframeMessenger.sendRequest('disableParticipantMicrophone', { id: participantId });
     }
 
-    askToUnmuteMicrophone(participantId) {
-        return this._iframeMessenger.sendRequest('askToUnmuteMicrophone', { id: participantId });
+    askToEnableMicrophone(participantId) {
+        return this._iframeMessenger.sendRequest('askToEnableMicrophone', { id: participantId });
     }
 
     blockParticipantMicrophone(participantId) {
@@ -196,8 +195,8 @@ export class EmbeddedRoom {
         return this._iframeMessenger.sendRequest('muteParticipantCamera', { id: participantId });
     }
 
-    askToUnmuteCamera(participantId) {
-        return this._iframeMessenger.sendRequest('askToUnmuteCamera', { id: participantId });
+    askToEnableCamera(participantId) {
+        return this._iframeMessenger.sendRequest('askToEnableCamera', { id: participantId });
     }
 
     blockParticipantCamera(participantId) {
@@ -220,8 +219,8 @@ export class EmbeddedRoom {
         return this._iframeMessenger.sendRequest('startMeeting');
     }
 
-    finishMeeting() {
-        return this._iframeMessenger.sendRequest('finishMeeting');
+    endMeeting() {
+        return this._iframeMessenger.sendRequest('endMeeting');
     }
 
     startRecording(uiState = null) {
@@ -268,6 +267,10 @@ export class EmbeddedRoom {
         this._eventEmitter.removeListener(event, listener);
     }
 
+    off(event, listener) {
+        this._eventEmitter.removeListener(event, listener);
+    }
+
     updateUIConfig(config) {
         return this._iframeMessenger.sendRequest('updateUIConfig', {
             ...DEFAULT_UI_CONFIG,
@@ -282,8 +285,10 @@ export class EmbeddedRoom {
     }
 
     _createIframeMessenger() {
+        const url = new URL(this._meetingUrl);
+
         this._iframeMessenger = DependencyContainer.get('iframeMessengerFactory').create({
-            targetOrigin: this._appOrigin,
+            targetOrigin: url.origin,
             targetWindow: this.iframeElement.contentWindow,
             window: DependencyContainer.get('window'),
             nanoid: DependencyContainer.get('nanoid'),
@@ -299,8 +304,8 @@ export class EmbeddedRoom {
         this._eventForwarder.initialize();
     }
 
-    _createIframeElement({ meetingId, width, height, style = {} }) {
-        const iframeId = `ProficonfEmbeddedRoom-${meetingId}`;
+    _createIframeElement({ width, height, style = {} }) {
+        const iframeId = `ProficonfEmbeddedRoom-${this._meetingId}`;
         const document = DependencyContainer.get('document');
         const iframe = document.createElement('iframe');
 
@@ -319,28 +324,31 @@ export class EmbeddedRoom {
         return iframe;
     }
 
-    _buildUrl({ user, meetingId, interfaceConfig }) {
+    _buildUrl({ user, meetingUrl, interfaceConfig }) {
         const location = DependencyContainer.get('location');
         const locale = user.locale
-            ? `${user.locale}/`
-            : '';
+            ? `${user.locale}`
+            : DEFAULT_USER_LOCALE;
 
-        let url = `${this._appOrigin}/${locale}j/${meetingId}/?embedded=1`;
+        const url = new URL(meetingUrl);
+        url.searchParams.append('embedded', '1');
+        url.searchParams.append('locale', locale);
+        
         const serializedConfig = DependencyContainer.get('interfaceConfigSerializer').serializeToString(interfaceConfig);
 
         if (user.token) {
-            url += `&t=${user.token}`;
+            url.searchParams.append('t', user.token);
         } else if (user.name) {
-            url += `&un=${encodeURIComponent(user.name)}`;
+            url.searchParams.append('un', user.name);
         }
 
-        url += `&ui=${serializedConfig}`;
+        url.searchParams.append('ui', serializedConfig);
 
         if (location.protocol !== 'https:' && location.protocol !== 'http:') {
-            url += '&skipAuth=1';
+            url.searchParams.append('skipAuth', '1');
         }
 
-        return url;
+        return url.toString();
     }
 }
 

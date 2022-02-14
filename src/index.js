@@ -1,5 +1,4 @@
 import SimpleFactory  from '@proficonf/utils/shared/SimpleFactory';
-import lzString from 'lz-string';
 import { EventEmitter } from 'events';
 import { nanoid } from 'nanoid';
 import { DependencyContainer } from './dependency-container';
@@ -20,7 +19,6 @@ DependencyContainer
     .set('location', location)
     .set('eventForwarderFactory', SimpleFactory.for(EventForwarder))
     .set('interfaceConfigSerializer', new InterfaceConfigSerializer({
-        lzString,
         serializationOrder: UI_SERIALIZATION_ORDER,
     }));
 

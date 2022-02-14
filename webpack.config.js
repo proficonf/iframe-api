@@ -21,7 +21,6 @@ module.exports = (_, argv) => {
             path: path.resolve(__dirname, 'dist'),
             publicPath: '/',
             filename: '[name].js',
-            library: 'Proficonf',
             libraryTarget: 'umd',
             globalObject: 'this',
         },

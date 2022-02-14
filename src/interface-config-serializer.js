@@ -1,6 +1,5 @@
 export class InterfaceConfigSerializer {
-    constructor({ lzString, serializationOrder }) {
-        this._lzString = lzString;
+    constructor({ serializationOrder }) {
         this._serializationOrder = serializationOrder;
     }
 
@@ -21,8 +20,15 @@ export class InterfaceConfigSerializer {
             configValues.push(value);
         }
 
-        return this._lzString.compressToEncodedURIComponent(
-            JSON.stringify(configValues)
+        return this._encodeBase64(JSON.stringify(configValues));
+    }
+
+    _encodeBase64(string) {
+        return btoa(
+            encodeURIComponent(string).replace(/%([0-9A-F]{2})/g,
+            function toSolidBytes(match, p1) {
+                return String.fromCharCode('0x' + p1);
+            })
         );
     }
 }
