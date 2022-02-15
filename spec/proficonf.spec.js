@@ -64,8 +64,14 @@ describe('Proficonf', () => {
 
         rootElement = jasmine.createSpyObj('root', ['appendChild']);
 
-        interfaceConfigSerializer = jasmine.createSpyObj('interfaceConfigSerializer', ['serializeToString']);
+        interfaceConfigSerializer = jasmine.createSpyObj('interfaceConfigSerializer', ['serializeToString', 'serializeToObject']);
         interfaceConfigSerializer.serializeToString.and.returnValue('fake-serialized-ui-config');
+        interfaceConfigSerializer.serializeToObject.withArgs({
+            removeElements: ['fake-element'],
+            customPrimaryColor: 'fake-color',
+            customLogoSrc: 'fake-logo-src',
+            displayMode: 'fake-display-mode'
+        }).and.returnValue('fake-serialized-object');
 
         DependencyContainer
             .set('eventEmitterFactory', eventEmitterFactory)
@@ -653,12 +659,7 @@ describe('Proficonf', () => {
                     customLogoSrc: 'fake-logo-src',
                     displayMode: 'fake-display-mode'
                 },
-                expectedRequestPayload: {
-                    removeElements: ['fake-element'],
-                    customPrimaryColor: 'fake-color',
-                    customLogoSrc: 'fake-logo-src',
-                    displayMode: 'fake-display-mode'
-                }
+                expectedRequestPayload: 'fake-serialized-object'
             });
         });
 

@@ -4,14 +4,18 @@ export class InterfaceConfigSerializer {
     }
 
     serializeToString(interfaceConfig) {
-        const config = {
+        const config = this.serializeToObject(interfaceConfig);
+
+        return this._encodeToBase64(JSON.stringify(config));
+    }
+
+    serializeToObject(interfaceConfig) {
+        return {
             re: interfaceConfig.removeElements.map(elementName => this._elementsMapping[elementName] || elementName),
             pc: this._serializeValue(interfaceConfig.customPrimaryColor),
             l: this._serializeValue(interfaceConfig.customLogoSrc),
             dm: this._serializeValue(interfaceConfig.displayMode)
         };
-
-        return this._encodeToBase64(JSON.stringify(config));
     }
 
     _serializeValue(value) {

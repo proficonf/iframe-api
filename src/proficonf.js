@@ -271,11 +271,13 @@ export class Proficonf {
         this._eventEmitter.removeListener(event, listener);
     }
 
-    updateUIConfig(config) {
-        return this._iframeMessenger.sendRequest('updateUIConfig', {
+    updateUIConfig(values) {
+        const config = DependencyContainer.get('interfaceConfigSerializer').serializeToObject({
             ...DEFAULT_UI_CONFIG,
-            ...config
+            ...values
         });
+
+        return this._iframeMessenger.sendRequest('updateUIConfig', config);
     }
 
     _initializeIframe() {
