@@ -22,4 +22,4 @@ DependencyContainer
         elementsMapping: UI_ELEMENTS_MAPPING,
     }));
 
-export default Proficonf;
+export { Proficonf };

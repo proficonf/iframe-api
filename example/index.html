@@ -48,28 +48,6 @@
 
         </div>
         <div class="flex-row">
-            <button class="toggleUiElement" data-toggle="disableLeftBar">Toggle leftbar</button>
-            <button class="toggleUiElement" data-toggle="disableTopBar">Toggle topbar</button>
-            <button class="toggleUiElement" data-toggle="disableChatbutton">Toggle chat button</button>
-            <button class="toggleUiElement" data-toggle="disableSharingCenterButton">Toggle sharing center button</button>
-            <button class="toggleUiElement" data-toggle="disableSharedFilesButton">Toggle shared files button</button>
-            <button class="toggleUiElement" data-toggle="disableParticipantsListButton">Toggle participants button</button>
-            <button class="toggleUiElement" data-toggle="disableDeviceControls">Toggle device controls</button>
-            <button class="toggleUiElement" data-toggle="disableCameraControl">Toggle camera control</button>
-            <button class="toggleUiElement" data-toggle="disableMicrophoneControl">Toggle microphone control</button>
-            <button class="toggleUiElement" data-toggle="disableLeaveButton">Toggle leave button</button>
-            <button class="toggleUiElement" data-toggle="disableMeetingName">Toggle meeting name</button>
-            <button class="toggleUiElement" data-toggle="disableRoomLocker">Toggle room locker</button>
-            <button class="toggleUiElement" data-toggle="disableTimer">Toggle timer</button>
-            <button class="toggleUiElement" data-toggle="disableQualityIndicator">Toggle quality indicator</button>
-            <button class="toggleUiElement" data-toggle="disableInviteButton">Toggle invite button</button>
-            <button class="toggleUiElement" data-toggle="disableRecordingControl">Toggle recording control</button>
-            <button class="toggleUiElement" data-toggle="disableStreamingControl">Toggle streaming control</button>
-            <button class="toggleUiElement" data-toggle="disableDisplayModeButton">Toggle Display Mode button</button>
-            <button class="toggleUiElement" data-toggle="disableConfigButton">Toggle config button</button>
-            <button class="toggleUiElement" data-toggle="disableLogo">Toggle logo</button>
-        </div>
-        <div class="flex-row">
             <input type="color" id="primaryColor" name="primaryColor" />
             <label for="primaryColor">PrimaryColor</label>
         </div>
@@ -80,35 +58,15 @@
         let room;
         const userName = 'John Doe';
         const uiConfig = {
-            disableLeftBar: false,
-            disableTopBar: false,
-            disableChatbutton: false,
-            disableSharingCenterButton: false,
-            disableSharedFilesButton: false,
-            disableParticipantsListButton: false,
-            disableDeviceControls: false,
-            disableCameraControl: false,
-            disableMicrophoneControl: false,
-            disableLeaveButton: false,
-            disableMeetingName: false,
-            disableRoomLocker: false,
-            disableTimer: false,
-            disableQualityIndicator: false,
-            disableInviteButton: false,
-            disableRecordingControl: false,
-            disableStreamingControl: false,
-            disableDisplayModeButton: false,
-            disableConfigButton: false,
-            disableLogo: false,
-            primaryColor: '#000000',
-            logoSrc: 'https://github.githubassets.com/images/modules/logos_page/Octocat.png',
-            displayMode: 'default'
+            removeElements: ['logo'],
+            customPrimaryColor: '#000000',
+            customLogoSrc: 'https://github.githubassets.com/images/modules/logos_page/Octocat.png',
+            displayMode: 'activeSpeaker'
         };
 
-        async function initializeRoom(appOrigin, meetingId) {
-            room = Proficonf.EmbeddedRoom.create({
-                meetingId,
-                appOrigin,
+        async function initializeRoom(meetingUrl) {
+            room = new Proficonf.create({
+                meetingUrl,
                 rootElement: document.querySelector('div#iframeWrapper'),
                 user: {
                     name: userName,
@@ -139,11 +97,10 @@
             document.querySelector('#joinBtn').addEventListener('click', () => {
                 const meetingUrl = document.querySelector('#meetingUrl').value;
 
-                const [origin, meetingId] = meetingUrl.split('/j/');
                 document.querySelector('#initForm').style.display = 'none';
                 
 
-                initializeRoom(origin, meetingId.replace('/', '')).then(() =>{
+                initializeRoom(meetingUrl).then(() =>{
                     document.querySelector('#screen').style.display = 'block';
                 });
             });
@@ -164,29 +121,12 @@
             });
 
             document.querySelector('#primaryColor').addEventListener('change', (event) =>{
-                uiConfig.primaryColor = event.target.value;
-                uiConfig.logoSrc = `https://i.pravatar.cc/150?u=${event.target.value.replace('#', 'x')}`;
+                uiConfig.customPrimaryColor = event.target.value;
+                uiConfig.customLogoSrc = `https://i.pravatar.cc/150?u=${event.target.value.replace('#', 'x')}`;
                 room.updateUIConfig(uiConfig);
             });
 
-            document.querySelectorAll('.toggleUiElement').forEach(element =>{
-                element.addEventListener('click', (event) =>{
-                    event.preventDefault();
-                    const configName = event.target.dataset.toggle;
-                    uiConfig[configName] =  !uiConfig[configName];
-                    event.target.innerText = configName + ': ' + uiConfig[configName];
-                    if(uiConfig[configName]){
-                        event.target.classList.add('active');
-                    } else {
-                        event.target.classList.remove('active');
-                    }
-                    
-                    room.updateUIConfig(uiConfig);
-                });
-            })
-
             window.room = room;
-            //http://172.17.0.1:8000/j/2AVT2rGmeT8/
         })();
 
     </script>
