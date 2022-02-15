@@ -5,9 +5,9 @@ import { DependencyContainer } from './dependency-container';
 import { IframeLoader } from './iframe-loader';
 import { IframeMessenger } from './iframe-messenger';
 import { EventForwarder } from './event-forwarder';
-import { EmbeddedRoom } from './embedded-room';
+import { Proficonf } from './proficonf';
 import { InterfaceConfigSerializer } from './interface-config-serializer';
-import { UI_SERIALIZATION_ORDER } from './default-ui-config';
+import { UI_ELEMENTS_MAPPING } from './default-ui-config';
 
 DependencyContainer
     .set('eventEmitterFactory', SimpleFactory.for(EventEmitter))
@@ -19,7 +19,7 @@ DependencyContainer
     .set('location', location)
     .set('eventForwarderFactory', SimpleFactory.for(EventForwarder))
     .set('interfaceConfigSerializer', new InterfaceConfigSerializer({
-        serializationOrder: UI_SERIALIZATION_ORDER,
+        elementsMapping: UI_ELEMENTS_MAPPING,
     }));
 
-export { EmbeddedRoom };
+export default Proficonf;

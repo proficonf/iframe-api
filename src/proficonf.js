@@ -18,8 +18,8 @@ const DEFAULT_USER_LOCALE = 'en';
 
 export class Proficonf {
     constructor({
-        rootElement = document.body,
         meetingUrl,
+        rootElement = document.body,
         user = {},
         iframe: {
             width = DEFAULT_WIDTH,
@@ -191,8 +191,8 @@ export class Proficonf {
         return this._iframeMessenger.sendRequest('unblockParticipantMicrophone', { id: participantId });
     }
 
-    muteParticipantCamera(participantId) {
-        return this._iframeMessenger.sendRequest('muteParticipantCamera', { id: participantId });
+    disableParticipantCamera(participantId) {
+        return this._iframeMessenger.sendRequest('disableParticipantCamera', { id: participantId });
     }
 
     askToEnableCamera(participantId) {
@@ -333,7 +333,7 @@ export class Proficonf {
         const url = new URL(meetingUrl);
         url.searchParams.append('embedded', '1');
         url.searchParams.append('locale', locale);
-        
+
         const serializedConfig = DependencyContainer.get('interfaceConfigSerializer').serializeToString(interfaceConfig);
 
         if (user.token) {

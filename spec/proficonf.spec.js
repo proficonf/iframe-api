@@ -1,9 +1,9 @@
 import { DependencyContainer } from '../src/dependency-container';
 import { factoryMockHelper } from './setup';
-import { EmbeddedRoom } from '../src/embedded-room';
+import { Proficonf } from '../src/proficonf';
 
-describe('EmbeddedRoom', () => {
-    let embeddedRoom;
+describe('Proficonf', () => {
+    let proficonf;
     let eventEmitterFactory;
     let eventEmitter;
     let iframeLoaderFactory;
@@ -25,6 +25,7 @@ describe('EmbeddedRoom', () => {
     }
 
     beforeEach(() => {
+
         eventEmitter = jasmine.createSpyObj('eventEmitter', ['on', 'removeListener', 'once']);
         eventEmitterFactory = factoryMockHelper.create(eventEmitter);
 
@@ -64,31 +65,7 @@ describe('EmbeddedRoom', () => {
         rootElement = jasmine.createSpyObj('root', ['appendChild']);
 
         interfaceConfigSerializer = jasmine.createSpyObj('interfaceConfigSerializer', ['serializeToString']);
-        interfaceConfigSerializer.serializeToString.withArgs({
-            disableLeftBar: 'fake-disable-left-bar',
-            disableTopBar: false,
-            disableChatbutton: false,
-            disableSharingCenterButton: false,
-            disableSharedFilesButton: false,
-            disableParticipantsListButton: false,
-            disableDeviceControls: false,
-            disableCameraControl: false,
-            disableMicrophoneControl: false,
-            disableLeaveButton: false,
-            disableMeetingName: false,
-            disableRoomLocker: false,
-            disableTimer: false,
-            disableQualityIndicator: false,
-            disableInviteButton: false,
-            disableRecordingControl: false,
-            disableStreamingControl: false,
-            disableDisplayModeButton: false,
-            disableConfigButton: false,
-            disableLogo: false,
-            primaryColor: 'default',
-            logoSrc: 'default',
-            displayMode: 'default'
-        }).and.returnValue('fake-serialized-ui-config');
+        interfaceConfigSerializer.serializeToString.and.returnValue('fake-serialized-ui-config');
 
         DependencyContainer
             .set('eventEmitterFactory', eventEmitterFactory)
@@ -104,9 +81,9 @@ describe('EmbeddedRoom', () => {
                 stub: true
             });
 
-        embeddedRoom = new EmbeddedRoom({
+        proficonf = new Proficonf({
             rootElement,
-            meetingId: 'fake-meeting-id',
+            meetingUrl: 'https://fake.com/j/meeting-alias',
             user: {
                 name: 'fake-user-name',
                 locale: 'fake-locale'
@@ -119,9 +96,8 @@ describe('EmbeddedRoom', () => {
                 }
             },
             ui: {
-                disableLeftBar: 'fake-disable-left-bar'
+                disableElements: ['element-1']
             },
-            appOrigin: 'fake-app-origin'
         });
     });
 
@@ -137,8 +113,8 @@ describe('EmbeddedRoom', () => {
 
             it('should initialize default iframe properties', () => {
                 expect(iframeElement.allow).toBe('camera; microphone; display-capture; autoplay; clipboard-write; clipboard-read; fullscreen');
-                expect(iframeElement.name).toBe('ProficonfEmbeddedRoom-fake-meeting-id');
-                expect(iframeElement.id).toBe('ProficonfEmbeddedRoom-fake-meeting-id');
+                expect(iframeElement.name).toBe('ProficonfEmbeddedRoom-meeting-alias');
+                expect(iframeElement.id).toBe('ProficonfEmbeddedRoom-meeting-alias');
             });
 
             it('should initialize iframe styles', () => {
@@ -149,9 +125,9 @@ describe('EmbeddedRoom', () => {
             });
 
             it('should set default values for height and width', () => {
-                new EmbeddedRoom({
+                new Proficonf({
                     rootElement,
-                    meetingId: 'fake-meeting-id',
+                    meetingUrl: 'https://fake.com/j/meeting-alias',
                     user: {
                         name: 'fake-user-name',
                         locale: 'fake-locale'
@@ -164,37 +140,36 @@ describe('EmbeddedRoom', () => {
                     ui: {
                         disableLeftBar: 'fake-disable-left-bar'
                     },
-                    appOrigin: 'fake-app-origin'
                 });
 
-                expect(iframeElement.style['width']).toBe('100%');
-                expect(iframeElement.style['height']).toBe('100%');
+                expect(iframeElement.style['width']).toBe('640px');
+                expect(iframeElement.style['height']).toBe('450px');
             });
         });
     });
 
     it('has iframeElement getter', () => {
-        expect(embeddedRoom.iframeElement).toBe(iframeElement);
+        expect(proficonf.iframeElement).toBe(iframeElement);
     });
 
     it('has rootElement getter', () => {
-        expect(embeddedRoom.rootElement).toBe(rootElement);
+        expect(proficonf.rootElement).toBe(rootElement);
     });
 
     it('should allow to subscribe for events', () => {
-        embeddedRoom.on('x', 'y');
+        proficonf.on('x', 'y');
 
         expect(eventEmitter.on).toHaveBeenCalledOnceWith('x', 'y');
     });
 
     it('should allow to subscribe for events once', () => {
-        embeddedRoom.once('x', 'y');
+        proficonf.once('x', 'y');
 
         expect(eventEmitter.once).toHaveBeenCalledOnceWith('x', 'y');
     });
 
     it('should allow to unsubscribe from events', () => {
-        embeddedRoom.removeListener('x', 'y');
+        proficonf.removeListener('x', 'y');
 
         expect(eventEmitter.removeListener).toHaveBeenCalledOnceWith('x', 'y');
     });
@@ -215,29 +190,29 @@ describe('EmbeddedRoom', () => {
         });
 
         it('should make iframe visible', async () => {
-            await embeddedRoom.join();
+            await proficonf.join();
 
             expect(rootElement.appendChild).toHaveBeenCalledOnceWith(iframeElement);
         });
 
         it('should initialize iframeLoader', async () => {
-            await embeddedRoom.join();
+            await proficonf.join();
 
             expect(iframeLoaderFactory.create).toHaveBeenCalledOnceWith(iframeElement);
         });
 
         it('should load iframe url', async () => {
-            await embeddedRoom.join();
+            await proficonf.join();
 
             expect(iframeLoader.loadUrl).toHaveBeenCalledOnceWith(
-                'fake-app-origin/fake-locale/j/fake-meeting-id/?embedded=1&un=fake-user-name&ui=fake-serialized-ui-config'
+                'https://fake.com/j/meeting-alias?embedded=1&locale=fake-locale&un=fake-user-name&ui=fake-serialized-ui-config'
             );
         });
 
-        it('should use only user token when provided for url', async () => {
-            embeddedRoom = new EmbeddedRoom({
+        it('should use user token when provided for url', async () => {
+            proficonf = new Proficonf({
                 rootElement,
-                meetingId: 'fake-meeting-id',
+                meetingUrl: 'https://fake.com/j/meeting-alias',
                 user: {
                     token: 'fake-token'
                 },
@@ -251,30 +226,29 @@ describe('EmbeddedRoom', () => {
                 ui: {
                     disableLeftBar: 'fake-disable-left-bar'
                 },
-                appOrigin: 'fake-app-origin'
             });
 
-            await embeddedRoom.join();
+            await proficonf.join();
 
             expect(iframeLoader.loadUrl).toHaveBeenCalledOnceWith(
-                'fake-app-origin/j/fake-meeting-id/?embedded=1&t=fake-token&ui=fake-serialized-ui-config'
+                'https://fake.com/j/meeting-alias?embedded=1&locale=en&t=fake-token&ui=fake-serialized-ui-config'
             );
         });
 
         it('Should createe iframe messenger', async () => {
-            await embeddedRoom.join();
+            await proficonf.join();
 
             expect(iframeMessengerFactory.create).toHaveBeenCalledOnceWith({
-                targetOrigin: 'fake-app-origin',
+                targetOrigin: 'https://fake.com',
                 targetWindow: iframeElement.contentWindow,
                 window,
                 nanoid,
-                correlationId: 'fake-meeting-id'
+                correlationId: 'meeting-alias'
             });
         });
 
         it('Should create eventForwarder', async () => {
-            await embeddedRoom.join();
+            await proficonf.join();
 
             expect(eventForwarderFactory.create).toHaveBeenCalledOnceWith({
                 iframeMessenger,
@@ -283,19 +257,19 @@ describe('EmbeddedRoom', () => {
         });
 
         it('Should initialize eventForwarder', async () => {
-            await embeddedRoom.join();
+            await proficonf.join();
 
             expect(eventForwarder.initialize).toHaveBeenCalledOnceWith();
         });
 
         it('Should initialize iframeMessenger', async () => {
-            await embeddedRoom.join();
+            await proficonf.join();
 
             expect(iframeMessenger.initialize).toHaveBeenCalledOnceWith();
         });
 
         it('Should send initialize command', async () => {
-            await embeddedRoom.join();
+            await proficonf.join();
 
             expect(iframeMessenger.sendMessage).toHaveBeenCalledOnceWith('initialize', {});
         });
@@ -308,7 +282,7 @@ describe('EmbeddedRoom', () => {
                 });
 
             await expectAsync(
-                embeddedRoom.join()
+                proficonf.join()
             ).toBeRejectedWith(new Error('App initialization timeout'));
         });
     });
@@ -318,7 +292,7 @@ describe('EmbeddedRoom', () => {
             iframeMessenger.sendMessage
                 .withArgs('initialize', {})
                 .and.callFake(() => emitMessage('app:ready', {}));
-            return embeddedRoom.join();
+            return proficonf.join();
         });
 
         async function testCommandProxy({ command, expectedRequestPayload = undefined, functionArguments = undefined }) {
@@ -328,7 +302,7 @@ describe('EmbeddedRoom', () => {
                     : [command];
                 iframeMessenger.sendRequest.withArgs(...commandArguments).and.resolveTo('fake-result');
 
-                await expectAsync(embeddedRoom[command](functionArguments)).toBeResolvedTo('fake-result');
+                await expectAsync(proficonf[command](functionArguments)).toBeResolvedTo('fake-result');
             });
         }
 
@@ -376,25 +350,25 @@ describe('EmbeddedRoom', () => {
             });
         });
 
-        describe('toggleChat()', () => {
+        describe('setChatState()', () => {
             testCommandProxy({
-                command: 'toggleChat',
+                command: 'setChatState',
                 functionArguments: { participantId: 'fake-id', isChatAllowed: 'fake-is-chat-allowed', stub: true },
                 expectedRequestPayload: { participantId: 'fake-id', isChatAllowed: 'fake-is-chat-allowed' }
             });
         });
 
-        describe('muteParticipantMicrophone()', () => {
+        describe('disableParticipantMicrophone()', () => {
             testCommandProxy({
-                command: 'muteParticipantMicrophone',
+                command: 'disableParticipantMicrophone',
                 functionArguments: 'fake-id',
                 expectedRequestPayload: { id: 'fake-id' }
             });
         });
 
-        describe('askToUnmuteMicrophone()', () => {
+        describe('askToEnableMicrophone()', () => {
             testCommandProxy({
-                command: 'askToUnmuteMicrophone',
+                command: 'askToEnableMicrophone',
                 functionArguments: 'fake-id',
                 expectedRequestPayload: { id: 'fake-id' }
             });
@@ -416,17 +390,9 @@ describe('EmbeddedRoom', () => {
             });
         });
 
-        describe('muteParticipantCamera()', () => {
+        describe('askToEnableCamera()', () => {
             testCommandProxy({
-                command: 'muteParticipantCamera',
-                functionArguments: 'fake-id',
-                expectedRequestPayload: { id: 'fake-id' }
-            });
-        });
-
-        describe('askToUnmuteCamera()', () => {
-            testCommandProxy({
-                command: 'askToUnmuteCamera',
+                command: 'askToEnableCamera',
                 functionArguments: 'fake-id',
                 expectedRequestPayload: { id: 'fake-id' }
             });
@@ -470,9 +436,9 @@ describe('EmbeddedRoom', () => {
             });
         });
 
-        describe('updateCameraDevice()', () => {
+        describe('setCameraDevice()', () => {
             testCommandProxy({
-                command: 'updateCameraDevice',
+                command: 'setCameraDevice',
                 functionArguments: 'fake-device-id',
                 expectedRequestPayload: { deviceId: 'fake-device-id' }
             });
@@ -492,9 +458,9 @@ describe('EmbeddedRoom', () => {
             });
         });
 
-        describe('updateMicrophoneDevice()', () => {
+        describe('setMicrophoneDevice()', () => {
             testCommandProxy({
-                command: 'updateMicrophoneDevice',
+                command: 'setMicrophoneDevice',
                 functionArguments: 'fake-device',
                 expectedRequestPayload: { deviceId: 'fake-device' }
             });
@@ -530,9 +496,9 @@ describe('EmbeddedRoom', () => {
             });
         });
 
-        describe('enableScreenSharing()', () => {
+        describe('startScreenSharing()', () => {
             testCommandProxy({
-                command: 'enableScreenSharing',
+                command: 'startScreenSharing',
                 functionArguments: { stub: true },
                 expectedRequestPayload: { constraints: { stub: true } }
             });
@@ -544,39 +510,39 @@ describe('EmbeddedRoom', () => {
             });
         });
 
-        describe('disableScreenSharing()', () => {
+        describe('stopScreenSharing()', () => {
             testCommandProxy({
-                command: 'disableScreenSharing',
+                command: 'stopScreenSharing',
             });
         });
 
-        describe('muteParticipantMicrophone()', () => {
+        describe('disableParticipantMicrophone()', () => {
             testCommandProxy({
-                command: 'muteParticipantMicrophone',
+                command: 'disableParticipantMicrophone',
                 functionArguments: 'fake-id',
                 expectedRequestPayload: { id: 'fake-id' }
             });
         });
 
-        describe('muteParticipantCamera()', () => {
+        describe('disableParticipantCamera()', () => {
             testCommandProxy({
-                command: 'muteParticipantCamera',
+                command: 'disableParticipantCamera',
                 functionArguments: 'fake-id',
                 expectedRequestPayload: { id: 'fake-id' }
             });
         });
 
-        describe('askToUnmuteMicrophone()', () => {
+        describe('askToEnableMicrophone()', () => {
             testCommandProxy({
-                command: 'askToUnmuteMicrophone',
+                command: 'askToEnableMicrophone',
                 functionArguments: 'fake-id',
                 expectedRequestPayload: { id: 'fake-id' }
             });
         });
 
-        describe('askToUnmuteCamera()', () => {
+        describe('askToEnableCamera()', () => {
             testCommandProxy({
-                command: 'askToUnmuteCamera',
+                command: 'askToEnableCamera',
                 functionArguments: 'fake-id',
                 expectedRequestPayload: { id: 'fake-id' }
             });
@@ -636,9 +602,9 @@ describe('EmbeddedRoom', () => {
             });
         });
 
-        describe('finishMeeting()', () => {
+        describe('endMeeting()', () => {
             testCommandProxy({
-                command: 'finishMeeting',
+                command: 'endMeeting',
             });
         });
 
@@ -681,32 +647,17 @@ describe('EmbeddedRoom', () => {
         describe('updateUIConfig()', () => {
             testCommandProxy({
                 command: 'updateUIConfig',
-                functionArguments: { fake: true },
+                functionArguments: {
+                    removeElements: ['fake-element'],
+                    customPrimaryColor: 'fake-color',
+                    customLogoSrc: 'fake-logo-src',
+                    displayMode: 'fake-display-mode'
+                },
                 expectedRequestPayload: {
-                    disableLeftBar: false,
-                    disableTopBar: false,
-                    disableChatbutton: false,
-                    disableSharingCenterButton: false,
-                    disableSharedFilesButton: false,
-                    disableParticipantsListButton: false,
-                    disableDeviceControls: false,
-                    disableCameraControl: false,
-                    disableMicrophoneControl: false,
-                    disableLeaveButton: false,
-                    disableMeetingName: false,
-                    disableRoomLocker: false,
-                    disableTimer: false,
-                    disableQualityIndicator: false,
-                    disableInviteButton: false,
-                    disableRecordingControl: false,
-                    disableStreamingControl: false,
-                    disableDisplayModeButton: false,
-                    disableConfigButton: false,
-                    disableLogo: false,
-                    primaryColor: 'default',
-                    logoSrc: 'default',
-                    displayMode: 'default',
-                    fake: true
+                    removeElements: ['fake-element'],
+                    customPrimaryColor: 'fake-color',
+                    customLogoSrc: 'fake-logo-src',
+                    displayMode: 'fake-display-mode'
                 }
             });
         });

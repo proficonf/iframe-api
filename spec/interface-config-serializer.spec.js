@@ -1,62 +1,69 @@
 import { InterfaceConfigSerializer } from '../src/interface-config-serializer';
 
 describe('InterfaceConfigSerializer', () => {
-    let lzString;
     let serializer;
 
     beforeEach(() => {
-        lzString = jasmine.createSpyObj('lzString', ['compressToEncodedURIComponent']);
         serializer = new InterfaceConfigSerializer({
-            lzString,
-            serializationOrder: ['xField', 'yField', 'zField', 'aField']
+            elementsMapping: {
+                elementName: '[mappedName]',
+                elementName2: '[mappedName2]'
+            },
         });
+
+        spyOn(serializer, '_encodeToBase64');
     });
 
     describe('serializeToString()', () => {
-        it('should replace true values to 1', () => {
+        it('should replace boolean values with number analog', () => {
             serializer.serializeToString({
-                aField: true,
-                xField: true,
-                yField: true,
-                zField: true
+                customLogoSrc: true,
+                customPrimaryColor: true,
+                displayMode: false,
+                removeElements: []
             });
 
-            expect(lzString.compressToEncodedURIComponent).toHaveBeenCalledOnceWith('[1,1,1,1]');
+            expect(serializer._encodeToBase64).toHaveBeenCalledOnceWith(
+                JSON.stringify({
+                    re: [],
+                    pc: 1,
+                    l: 1,
+                    dm: 0
+                })
+            );
         });
 
-        it('should replace false values to 0', () => {
+        it('should use null as default values', () => {
             serializer.serializeToString({
-                aField: false,
-                xField: false,
-                yField: false,
-                zField: false
+                removeElements: []
             });
 
-            expect(lzString.compressToEncodedURIComponent).toHaveBeenCalledOnceWith('[0,0,0,0]');
+            expect(serializer._encodeToBase64).toHaveBeenCalledOnceWith(
+                JSON.stringify({
+                    re: [],
+                    pc: null,
+                    l: null,
+                    dm: null
+                })
+            );
         });
 
-        it('should keep serialization order', () => {
+        it('should map removed elements', () => {
             serializer.serializeToString({
-                xField: 'fake-x',
-                aField: 'fake-a',
-                yField: 'fake-y',
-                zField: 'fake-z',
-                anotherField: 'fake-field'
+                customLogoSrc: '[customLogo]',
+                customPrimaryColor: '[primaryColor]',
+                displayMode: '[displayMode]',
+                removeElements: ['elementName', 'elementName2', 'unknownElement']
             });
 
-            expect(lzString.compressToEncodedURIComponent).toHaveBeenCalledOnceWith('["fake-x","fake-y","fake-z","fake-a"]');
-        });
-
-        it('should return result', () => {
-            lzString.compressToEncodedURIComponent.and.returnValue('FakeResult');
-
-            expect(serializer.serializeToString({
-                xField: 'fake-x',
-                aField: 'fake-a',
-                yField: 'fake-y',
-                zField: 'fake-z',
-                anotherField: 'fake-field'
-            })).toBe('FakeResult');
+            expect(serializer._encodeToBase64).toHaveBeenCalledOnceWith(
+                JSON.stringify({
+                    re: ['[mappedName]', '[mappedName2]', 'unknownElement'],
+                    pc: '[primaryColor]',
+                    l: '[customLogo]',
+                    dm: '[displayMode]'
+                })
+            );
         });
     });
 });
