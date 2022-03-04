@@ -13,8 +13,7 @@ const IFRAME_ALLOW_POLICIES = [
 ];
 const DEFAULT_WIDTH = '640px';
 const DEFAULT_HEIGHT = '450px';
-const APP_INITIALIZATION_TIMEOUT_MS = 60 * 1000; // 60 seconds to load conference
-const DEFAULT_USER_LOCALE = 'en';
+const APP_INITIALIZATION_TIMEOUT_MS = 20 * 1000; // 20 seconds to load conference
 
 export class Proficonf {
     constructor({
@@ -70,11 +69,11 @@ export class Proficonf {
             });
     }
 
-    get iframeElement() {
+    getIframeElement() {
         return this._iframeElement;
     }
 
-    get rootElement() {
+    getRootElement() {
         return this._rootElement;
     }
 
@@ -291,7 +290,7 @@ export class Proficonf {
 
         this._iframeMessenger = DependencyContainer.get('iframeMessengerFactory').create({
             targetOrigin: url.origin,
-            targetWindow: this.iframeElement.contentWindow,
+            targetWindow: this._iframeElement.contentWindow,
             window: DependencyContainer.get('window'),
             nanoid: DependencyContainer.get('nanoid'),
             correlationId: this._meetingId
@@ -328,13 +327,12 @@ export class Proficonf {
 
     _buildUrl({ user, meetingUrl, interfaceConfig }) {
         const location = DependencyContainer.get('location');
-        const locale = user.locale
-            ? `${user.locale}`
-            : DEFAULT_USER_LOCALE;
-
         const url = new URL(meetingUrl);
         url.searchParams.append('embedded', '1');
-        url.searchParams.append('locale', locale);
+
+        if (user.locale) {
+            url.searchParams.append('locale', user.locale);
+        }
 
         const serializedConfig = DependencyContainer.get('interfaceConfigSerializer').serializeToString(interfaceConfig);
 

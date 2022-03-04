@@ -155,11 +155,11 @@ describe('Proficonf', () => {
     });
 
     it('has iframeElement getter', () => {
-        expect(proficonf.iframeElement).toBe(iframeElement);
+        expect(proficonf.getIframeElement()).toBe(iframeElement);
     });
 
     it('has rootElement getter', () => {
-        expect(proficonf.rootElement).toBe(rootElement);
+        expect(proficonf.getRootElement()).toBe(rootElement);
     });
 
     it('should allow to subscribe for events', () => {
@@ -237,7 +237,7 @@ describe('Proficonf', () => {
             await proficonf.join();
 
             expect(iframeLoader.loadUrl).toHaveBeenCalledOnceWith(
-                'https://fake.com/j/meeting-alias?embedded=1&locale=en&t=fake-token&ui=fake-serialized-ui-config'
+                'https://fake.com/j/meeting-alias?embedded=1&t=fake-token&ui=fake-serialized-ui-config'
             );
         });
 

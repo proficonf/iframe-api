@@ -67,12 +67,12 @@ describe('EventForwarder', () => {
 
             iframeMessenger.emitCommand('event', {
                 eventName: 'fake-event-name',
-                payload: 'fake-payload'
+                payload: { fake: 'value' }
             });
 
             expect(spy).toHaveBeenCalledOnceWith({
                 type: 'fake-event-name',
-                payload: 'fake-payload'
+                fake: 'value'
             });
         });
     });

@@ -1,4 +1,4 @@
-import SimpleFactory  from '@proficonf/utils/shared/SimpleFactory';
+import { SimpleFactory }  from '../src/utils/SimpleFactory';
 import { EventEmitter } from 'events';
 import { nanoid } from 'nanoid';
 import { DependencyContainer } from './dependency-container';

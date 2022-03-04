@@ -1,8 +1,14 @@
 {
-    "extends": "@proficonf",
+    "env": {
+        "commonjs": true,
+        "es6": true,
+        "node": true,
+        "jasmine": true
+    },
+    "extends": "eslint:recommended",
     "parserOptions": {
-        "sourceType": "module",
-        "ecmaVersion": 2018
+        "ecmaVersion": 11,
+        "sourceType": "module"
     },
     "globals": {
         "window": "readonly",
@@ -10,6 +16,126 @@
         "location": "readonly"
     },
     "rules": {
-        "no-unreachable-loop": 0
+        // Possible Errors
+        "no-console": "error",
+        "no-empty": ["error", {
+            "allowEmptyCatch": true
+        }],
+        "no-extra-parens": ["error", "all"],
+        // Best Practices
+        "array-callback-return": ["error"],
+        "consistent-return": "error",
+        "dot-location": ["error", "property"],
+        "eqeqeq": ["error", "smart"],
+        "max-classes-per-file": ["error", 1],
+        "no-caller": "error",
+        "no-constructor-return": "error",
+        "no-else-return": "error",
+        "no-eq-null": "error",
+        "no-extra-bind": "error",
+        "no-extra-label": "error",
+        "no-floating-decimal": "error",
+        "no-implicit-coercion": "error",
+        "no-invalid-this": "error",
+        "no-iterator": "error",
+        "no-labels": "error",
+        "no-lone-blocks": "error",
+        "no-multi-spaces": ["error", {
+            "exceptions": {
+                "ImportDeclaration": true,
+                "VariableDeclarator": true
+            }
+        }],
+        "no-proto": "error",
+        "no-return-assign": "error",
+        "no-sequences": "error",
+        "no-throw-literal": "error",
+        "no-unused-expressions": ["error", {
+            "allowShortCircuit": true,
+            "allowTernary": true
+        }],
+        "no-useless-concat": "error",
+        "no-useless-return": "error",
+        "prefer-promise-reject-errors": "error",
+        "yoda": ["error", "never"],
+        // Variables
+        "no-undef-init": "error",
+        "no-unused-vars": ["error", {
+            "args": "none"
+        }],
+        // Stylistic Issues
+        "block-spacing": ["error", "always"],
+        "brace-style": "error",
+        "camelcase": ["error", {
+            "properties": "never"
+        }],
+        "comma-spacing": ["error", {
+            "before": false,
+            "after": true
+        }],
+        "computed-property-spacing": "error",
+        "eol-last": "error",
+        "func-call-spacing": "error",
+        "indent": ["error", 4, {
+            "SwitchCase": 1
+        }],
+        "key-spacing": ["error", {
+            "beforeColon": false,
+            "afterColon": true,
+            "mode": "minimum"
+        }],
+        "keyword-spacing": "error",
+        "linebreak-style": ["error", "unix"],
+        "lines-between-class-members": "error",
+        "max-len": ["error", {
+            "code": 125,
+            "tabWidth": 4,
+            "ignoreUrls": true,
+            "ignoreStrings": true,
+            "ignoreComments": true,
+            "ignoreTemplateLiterals": true,
+            "ignoreRegExpLiterals": true
+        }],
+        "max-params": ["error", {
+            "max": 4
+        }],
+        "max-statements-per-line": ["error", {
+            "max": 1
+        }],
+        "new-parens": "error",
+        "no-lonely-if": "error",
+        "no-multiple-empty-lines": ["error", { "max": 1 }],
+        "no-tabs": "error",
+        "no-trailing-spaces": "error",
+        "no-unneeded-ternary": "error",
+        "no-whitespace-before-property": "error",
+        "object-curly-spacing": ["error", "always"],
+        "quote-props": ["error", "consistent"],
+        "quotes": ["error", "single"],
+        "semi": ["error", "always"],
+        "semi-spacing": ["error", {
+            "before": false,
+            "after": true
+        }],
+        "space-before-blocks": "error",
+        "space-before-function-paren": ["error", {
+            "anonymous": "never",
+            "named": "never",
+            "asyncArrow": "always"
+        }],
+        // ECMAScript 6
+        "arrow-parens": ["error", "as-needed", {
+            "requireForBlockBody": true
+        }],
+        "arrow-spacing": ["error", {
+            "before": true,
+            "after": true
+        }],
+        "no-duplicate-imports": "error",
+        "no-useless-constructor": "error",
+        "no-useless-rename": "error",
+        "no-var": "error",
+        "prefer-const": "error",
+        "template-curly-spacing": "error"
     }
 }
