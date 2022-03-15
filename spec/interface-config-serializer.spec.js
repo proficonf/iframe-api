@@ -31,7 +31,6 @@ describe('InterfaceConfigSerializer', () => {
             );
         });
 
-
         it('should map removed elements', () => {
             serializer.serializeToString({
                 customLogoSrc: '[customLogo]',
@@ -42,10 +41,10 @@ describe('InterfaceConfigSerializer', () => {
 
             expect(serializer._encodeToBase64).toHaveBeenCalledOnceWith(
                 JSON.stringify({
-                    re: ['[mappedName]','[mappedName2]','unknownElement'],
+                    re: ['[mappedName]', '[mappedName2]', 'unknownElement'],
                     dm: '[displayMode]',
                     pc: '[primaryColor]',
-                    l :'[customLogo]'
+                    l: '[customLogo]'
                 })
             );
         });
