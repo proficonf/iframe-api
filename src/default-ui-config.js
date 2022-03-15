@@ -1,8 +1,8 @@
 export const UI_ELEMENTS_MAPPING = {
-    sidebar: 's',
-    topbar: 't',
+    sidebar: 'sb',
+    topbar: 'tb',
     chatButton: 'cb',
-    sharingButton: 'sc',
+    sharingButton: 'shc',
     sharedFilesButton: 'sf',
     participantsButton: 'pl',
     deviceControls: 'dc',
@@ -17,13 +17,6 @@ export const UI_ELEMENTS_MAPPING = {
     recordingControl: 'rc',
     streamingControl: 'sc',
     displayModeButton: 'dmb',
-    settingsButton: 'sb',
-    logo: 'tl'
-};
-
-export const DEFAULT_UI_CONFIG = {
-    removeElements: [],
-    customPrimaryColor: '',
-    customLogoSrc: '',
-    displayMode: 'activeSpeaker'
+    settingsButton: 'stb',
+    logo: 'l'
 };

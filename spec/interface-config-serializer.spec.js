@@ -19,7 +19,6 @@ describe('InterfaceConfigSerializer', () => {
             serializer.serializeToString({
                 customLogoSrc: true,
                 customPrimaryColor: true,
-                displayMode: false,
                 removeElements: []
             });
 
@@ -28,25 +27,10 @@ describe('InterfaceConfigSerializer', () => {
                     re: [],
                     pc: 1,
                     l: 1,
-                    dm: 0
                 })
             );
         });
 
-        it('should use null as default values', () => {
-            serializer.serializeToString({
-                removeElements: []
-            });
-
-            expect(serializer._encodeToBase64).toHaveBeenCalledOnceWith(
-                JSON.stringify({
-                    re: [],
-                    pc: null,
-                    l: null,
-                    dm: null
-                })
-            );
-        });
 
         it('should map removed elements', () => {
             serializer.serializeToString({
@@ -58,10 +42,10 @@ describe('InterfaceConfigSerializer', () => {
 
             expect(serializer._encodeToBase64).toHaveBeenCalledOnceWith(
                 JSON.stringify({
-                    re: ['[mappedName]', '[mappedName2]', 'unknownElement'],
+                    re: ['[mappedName]','[mappedName2]','unknownElement'],
+                    dm: '[displayMode]',
                     pc: '[primaryColor]',
-                    l: '[customLogo]',
-                    dm: '[displayMode]'
+                    l :'[customLogo]'
                 })
             );
         });

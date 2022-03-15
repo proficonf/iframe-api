@@ -1,5 +1,4 @@
 import { DependencyContainer } from './dependency-container';
-import { DEFAULT_UI_CONFIG } from './default-ui-config';
 const MEETING_ALIAS_PATTERN = /\/j\/([a-zA-Z0-9-_]+)/;
 
 const IFRAME_ALLOW_POLICIES = [
@@ -34,7 +33,7 @@ export class Proficonf {
         this._meetingUrl = this._buildUrl({
             user,
             meetingUrl,
-            interfaceConfig: { ...DEFAULT_UI_CONFIG, ...ui },
+            interfaceConfig: ui,
         });
         this._iframeElement = this._createIframeElement({
             width,
@@ -272,7 +271,6 @@ export class Proficonf {
 
     updateUIConfig(values) {
         const config = DependencyContainer.get('interfaceConfigSerializer').serializeToObject({
-            ...DEFAULT_UI_CONFIG,
             ...values
         });
 
