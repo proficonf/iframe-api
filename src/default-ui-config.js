@@ -7,7 +7,7 @@ export const UI_ELEMENTS_MAPPING = {
     participantsButton: 'pl',
     deviceControls: 'dc',
     cameraControl: 'cc',
-    microphoneControls: 'mc',
+    microphoneControl: 'mc',
     leaveButton: 'lb',
     meetingName: 'mn',
     roomLocker: 'rl',
