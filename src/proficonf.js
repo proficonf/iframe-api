@@ -86,6 +86,18 @@ export class Proficonf {
         return this._iframeMessenger.sendRequest('getDeviceList');
     }
 
+    getUserName() {
+        return this._iframeMessenger.sendRequest('getUserName');
+    }
+
+    getUserLocale() {
+        return this._iframeMessenger.sendRequest('getUserLocale');
+    }
+
+    getMeetingState() {
+        return this._iframeMessenger.sendRequest('getMeetingState');
+    }
+
     switchCamera() {
         return this._iframeMessenger.sendRequest('switchCamera');
     }
@@ -162,8 +174,8 @@ export class Proficonf {
         return this._iframeMessenger.sendRequest('banParticipant', { id });
     }
 
-    renameParticipant({ firstName, lastName }) {
-        return this._iframeMessenger.sendRequest('renameParticipant', { firstName, lastName });
+    renameParticipant(name) {
+        return this._iframeMessenger.sendRequest('renameParticipant', { name });
     }
 
     setChatState({ participantId, isChatAllowed }) {
@@ -177,8 +189,8 @@ export class Proficonf {
         return this._iframeMessenger.sendRequest('disableParticipantMicrophone', { id: participantId });
     }
 
-    askToEnableMicrophone(participantId) {
-        return this._iframeMessenger.sendRequest('askToEnableMicrophone', { id: participantId });
+    askToEnableParticipantMicrophone(participantId) {
+        return this._iframeMessenger.sendRequest('askToEnableParticipantMicrophone', { id: participantId });
     }
 
     blockParticipantMicrophone(participantId) {
@@ -193,8 +205,8 @@ export class Proficonf {
         return this._iframeMessenger.sendRequest('disableParticipantCamera', { id: participantId });
     }
 
-    askToEnableCamera(participantId) {
-        return this._iframeMessenger.sendRequest('askToEnableCamera', { id: participantId });
+    askToEnableParticipantCamera(participantId) {
+        return this._iframeMessenger.sendRequest('askToEnableParticipantCamera', { id: participantId });
     }
 
     blockParticipantCamera(participantId) {

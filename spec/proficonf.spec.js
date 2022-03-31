@@ -351,8 +351,8 @@ describe('Proficonf', () => {
         describe('renameParticipant()', () => {
             testCommandProxy({
                 command: 'renameParticipant',
-                functionArguments: { firstName: 'fake-first-name', lastName: 'fake-last-name' },
-                expectedRequestPayload: { firstName: 'fake-first-name', lastName: 'fake-last-name' }
+                functionArguments: 'fake-name',
+                expectedRequestPayload: { name: 'fake-name' }
             });
         });
 
@@ -372,9 +372,9 @@ describe('Proficonf', () => {
             });
         });
 
-        describe('askToEnableMicrophone()', () => {
+        describe('askToEnableParticipantMicrophone()', () => {
             testCommandProxy({
-                command: 'askToEnableMicrophone',
+                command: 'askToEnableParticipantMicrophone',
                 functionArguments: 'fake-id',
                 expectedRequestPayload: { id: 'fake-id' }
             });
@@ -396,9 +396,9 @@ describe('Proficonf', () => {
             });
         });
 
-        describe('askToEnableCamera()', () => {
+        describe('askToEnableParticipantCamera()', () => {
             testCommandProxy({
-                command: 'askToEnableCamera',
+                command: 'askToEnableParticipantCamera',
                 functionArguments: 'fake-id',
                 expectedRequestPayload: { id: 'fake-id' }
             });
@@ -533,22 +533,6 @@ describe('Proficonf', () => {
         describe('disableParticipantCamera()', () => {
             testCommandProxy({
                 command: 'disableParticipantCamera',
-                functionArguments: 'fake-id',
-                expectedRequestPayload: { id: 'fake-id' }
-            });
-        });
-
-        describe('askToEnableMicrophone()', () => {
-            testCommandProxy({
-                command: 'askToEnableMicrophone',
-                functionArguments: 'fake-id',
-                expectedRequestPayload: { id: 'fake-id' }
-            });
-        });
-
-        describe('askToEnableCamera()', () => {
-            testCommandProxy({
-                command: 'askToEnableCamera',
                 functionArguments: 'fake-id',
                 expectedRequestPayload: { id: 'fake-id' }
             });
