@@ -68,6 +68,19 @@ export class Proficonf {
             });
     }
 
+    leave() {
+        return this._iframeMessenger.sendRequest('leave')
+            .then(() => this._eventForwarder.dispose())
+            .then(() => this._iframeMessenger.dispose());
+    }
+
+    dispose() {
+        return this._iframeMessenger.sendRequest('leave')
+            .then(() => this._eventForwarder.dispose())
+            .then(() => this._iframeMessenger.dispose())
+            .then(() => this._iframeElement.remove());
+    }
+
     getIframeElement() {
         return this._iframeElement;
     }
