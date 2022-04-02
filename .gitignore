@@ -1,10 +1,15 @@
-# Created by .ignore support plugin (hsz.mobi)
+dist/
+
+# Node
+package-lock.json
+node_modules/
+
+# IDE
 .idea
 .vscode/*
+
+# Mac
 .DS_Store
-node_modules/
-dist/
-package-lock.json
 
 # Logs
 logs
@@ -34,7 +39,7 @@ pids
 # Yarn Integrity file
 .yarn-integrity
 
-# parcel-bundler cache (https://parceljs.org/)
+# parcel-bundler cache
 .cache
 .vscode
 
