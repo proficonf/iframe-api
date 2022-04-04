@@ -36,7 +36,7 @@
     "url": "git+https://github.com/proficonf/iframe-api.git"
   },
   "author": "Proficonf Ltd.",
-  "license": "UNLICENSED",
+  "license": "BSD-2-Clause",
   "homepage": "https://github.com/proficonf/iframe-api#readme",
   "publishConfig": {
     "registry": "https://npm.pkg.github.com/"
