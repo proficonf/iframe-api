@@ -39,6 +39,6 @@
   "license": "BSD-2-Clause",
   "homepage": "https://github.com/proficonf/iframe-api#readme",
   "publishConfig": {
-    "registry": "https://npm.pkg.github.com/"
+    "access": "public"
   }
 }
