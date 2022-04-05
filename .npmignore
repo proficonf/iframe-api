@@ -1,5 +1,7 @@
 .git
 .github/
+.gitlab-ci.yml
+.npmrc
 
 # Node
 package-lock.json
