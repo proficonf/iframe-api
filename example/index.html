@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <title>
+        <%= htmlWebpackPlugin.options.title %>
+    </title>
+</head>
+
+<body>
+    <style>
+        .flex-row {
+            display: flex;
+            justify-content: space-between;
+            align-items:center;
+            flex-flow: wrap;
+            padding: 7px;
+        }
+
+        button, input {
+            margin-top: 5px;
+            margin-left: 5px;
+            display: inline-block;
+            padding: 5px;
+        }
+        button.active {
+            background: #c4fdc4;
+        }
+    </style>
+    <div id="initForm">
+        <input 
+            type="text"
+            id="meetingUrl"
+            placeholder="enter meetingUrl"
+            value=""
+        />
+        <button id="joinBtn">Join</button>
+    </div>
+
+    <div class="buttons-container flex-row" id="screen" style="display: none">
+        <div class="flex-row">
+            <button id="enableCamera">EnableCamera</button>
+            <button id="disableCamera">DisableCamera</button>
+
+            <button id="enableMicrophone">EnableMicrophone</button>
+            <button id="disableMicrophone">DisableMicrophone</button>
+
+        </div>
+        <div class="flex-row">
+            <input type="color" id="primaryColor" name="primaryColor" />
+            <label for="primaryColor">PrimaryColor</label>
+        </div>
+    </div>
+    <div id="iframeWrapper"></div>
+
+    <script type="text/javascript">
+        let room;
+        const userName = 'John Doe';
+        const uiConfig = {
+            removeElements: ['logo'],
+            customPrimaryColor: '#000000',
+            customLogoSrc: 'https://github.githubassets.com/images/modules/logos_page/Octocat.png',
+            displayMode: 'activeSpeaker'
+        };
+
+        async function initializeRoom(meetingUrl) {
+            room = new Proficonf.create({
+                meetingUrl,
+                rootElement: document.querySelector('div#iframeWrapper'),
+                user: {
+                    name: userName,
+                    locale: 'en'
+                },
+                iframe: {
+                    width: '100%',
+                    height: '65vh',
+                    style: {
+                        border: '3px solid black',
+                        backgroundColor: 'grey',
+                        marginTop:'25px'
+                    }
+                },
+                ui:uiConfig
+            });
+
+            room.on('*', (data) => {
+                console.log('Event received', data);
+            });
+
+            await room.join();
+        }
+
+
+        (() => {
+
+            document.querySelector('#joinBtn').addEventListener('click', () => {
+                const meetingUrl = document.querySelector('#meetingUrl').value;
+
+                document.querySelector('#initForm').style.display = 'none';
+                
+
+                initializeRoom(meetingUrl).then(() =>{
+                    document.querySelector('#screen').style.display = 'block';
+                });
+            });
+
+            document.querySelector('#enableCamera').addEventListener('click', ()=>{
+                room.enableCamera();
+            });
+            document.querySelector('#disableCamera').addEventListener('click', ()=>{
+                room.disableCamera();
+            });
+
+            document.querySelector('#enableMicrophone').addEventListener('click', ()=>{
+                room.enableMicrophone();
+            });
+
+            document.querySelector('#disableMicrophone').addEventListener('click', ()=>{
+                room.disableMicrophone();
+            });
+
+            document.querySelector('#primaryColor').addEventListener('change', (event) =>{
+                uiConfig.customPrimaryColor = event.target.value;
+                uiConfig.customLogoSrc = `https://i.pravatar.cc/150?u=${event.target.value.replace('#', 'x')}`;
+                room.updateUIConfig(uiConfig);
+            });
+
+            window.room = room;
+        })();
+
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,11 @@
+{
+    "extends": "@proficonf",
+    "parserOptions": {
+        "sourceType": "module"
+    },
+    "globals": {
+        "window": "readonly",
+        "document": "readonly",
+        "location": "readonly"
+    }
+}
