@@ -1,6 +1,6 @@
 {
   "name": "@proficonf/iframe-api",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Proficonf Embedded API",
   "main": "dist/iframe-api.js",
   "directories": {
