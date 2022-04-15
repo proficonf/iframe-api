@@ -187,14 +187,25 @@ export class Proficonf {
         return this._iframeMessenger.sendRequest('banParticipant', { id });
     }
 
-    renameParticipant(name) {
-        return this._iframeMessenger.sendRequest('renameParticipant', { name });
+    setUserName(name) {
+        return this._iframeMessenger.sendRequest('setUserName', { name });
     }
 
-    setChatState({ participantId, isChatAllowed }) {
+    setUserLocale(locale) {
+        return this._iframeMessenger.sendRequest('setUserLocale', { locale });
+    }
+
+    disableChatForParticipant(participantId) {
         return this._iframeMessenger.sendRequest(
             'setChatState',
-            { participantId, isChatAllowed }
+            { participantId, isChatAllowed: false }
+        );
+    }
+
+    enableChatForParticipant(participantId) {
+        return this._iframeMessenger.sendRequest(
+            'setChatState',
+            { participantId, isChatAllowed: true }
         );
     }
 
@@ -230,7 +241,7 @@ export class Proficonf {
         return this._iframeMessenger.sendRequest('unblockParticipantCamera', { id: participantId });
     }
 
-    setParticipantRole({ participantId, role }) {
+    setParticipantRole(participantId, role) {
         return this._iframeMessenger.sendRequest('setParticipantRole', { id: participantId, role });
     }
 

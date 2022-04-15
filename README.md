@@ -1,3 +1,3 @@
 # iframe-api
 
-All docs are available [here](https://proficonf.dev/docs/iframe-reference/initialization).
+All docs are available [here](https://proficonf.dev/reference/iframe-api).
