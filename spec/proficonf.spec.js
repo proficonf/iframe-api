@@ -303,8 +303,8 @@ describe('Proficonf', () => {
 
         async function testCommandProxy({
             command,
-            functionName = undefined,
-            expectedRequestPayload = undefined,
+            functionName,
+            expectedRequestPayload,
             functionArguments = []
         }) {
             it(`should proxy command: ${command}`, async () => {
