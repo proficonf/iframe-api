@@ -301,14 +301,19 @@ describe('Proficonf', () => {
             return proficonf.join();
         });
 
-        async function testCommandProxy({ command, expectedRequestPayload = undefined, functionArguments = undefined }) {
+        async function testCommandProxy({
+            command,
+            functionName,
+            expectedRequestPayload,
+            functionArguments = []
+        }) {
             it(`should proxy command: ${command}`, async () => {
                 const commandArguments = expectedRequestPayload
                     ? [command, expectedRequestPayload]
                     : [command];
                 iframeMessenger.sendRequest.withArgs(...commandArguments).and.resolveTo('fake-result');
 
-                await expectAsync(proficonf[command](functionArguments)).toBeResolvedTo('fake-result');
+                await expectAsync(proficonf[functionName || command](...functionArguments)).toBeResolvedTo('fake-result');
             });
         }
 
@@ -319,7 +324,7 @@ describe('Proficonf', () => {
         describe('getParticipantById()', () => {
             testCommandProxy({
                 command: 'getParticipantById',
-                functionArguments: 'fake-id',
+                functionArguments: ['fake-id'],
                 expectedRequestPayload: { id: 'fake-id' }
             });
         });
@@ -327,7 +332,7 @@ describe('Proficonf', () => {
         describe('blockParticipant()', () => {
             testCommandProxy({
                 command: 'blockParticipant',
-                functionArguments: 'fake-id',
+                functionArguments: ['fake-id'],
                 expectedRequestPayload: { id: 'fake-id' }
             });
         });
@@ -335,7 +340,7 @@ describe('Proficonf', () => {
         describe('unblockParticipant()', () => {
             testCommandProxy({
                 command: 'unblockParticipant',
-                functionArguments: 'fake-id',
+                functionArguments: ['fake-id'],
                 expectedRequestPayload: { id: 'fake-id' }
             });
         });
@@ -343,31 +348,49 @@ describe('Proficonf', () => {
         describe('banParticipant()', () => {
             testCommandProxy({
                 command: 'banParticipant',
-                functionArguments: 'fake-id',
+                functionArguments: ['fake-id'],
                 expectedRequestPayload: { id: 'fake-id' }
             });
         });
 
-        describe('renameParticipant()', () => {
+        describe('setUserName()', () => {
             testCommandProxy({
-                command: 'renameParticipant',
-                functionArguments: 'fake-name',
+                command: 'setUserName',
+                functionArguments: ['fake-name'],
                 expectedRequestPayload: { name: 'fake-name' }
             });
         });
 
-        describe('setChatState()', () => {
+        describe('setUserLocale()', () => {
+            testCommandProxy({
+                command: 'setUserLocale',
+                functionArguments: ['fake-locale'],
+                expectedRequestPayload: { locale: 'fake-locale' }
+            });
+        });
+
+        describe('enableChatForParticipant()', () => {
             testCommandProxy({
                 command: 'setChatState',
-                functionArguments: { participantId: 'fake-id', isChatAllowed: 'fake-is-chat-allowed', stub: true },
-                expectedRequestPayload: { participantId: 'fake-id', isChatAllowed: 'fake-is-chat-allowed' }
+                functionName: 'enableChatForParticipant',
+                functionArguments: ['fake-id'],
+                expectedRequestPayload: { participantId: 'fake-id', isChatAllowed: true }
+            });
+        });
+
+        describe('disableChatForParticipant()', () => {
+            testCommandProxy({
+                command: 'setChatState',
+                functionName: 'disableChatForParticipant',
+                functionArguments: ['fake-id'],
+                expectedRequestPayload: { participantId: 'fake-id', isChatAllowed: false }
             });
         });
 
         describe('disableParticipantMicrophone()', () => {
             testCommandProxy({
                 command: 'disableParticipantMicrophone',
-                functionArguments: 'fake-id',
+                functionArguments: ['fake-id'],
                 expectedRequestPayload: { id: 'fake-id' }
             });
         });
@@ -375,7 +398,7 @@ describe('Proficonf', () => {
         describe('askToEnableParticipantMicrophone()', () => {
             testCommandProxy({
                 command: 'askToEnableParticipantMicrophone',
-                functionArguments: 'fake-id',
+                functionArguments: ['fake-id'],
                 expectedRequestPayload: { id: 'fake-id' }
             });
         });
@@ -383,7 +406,7 @@ describe('Proficonf', () => {
         describe('blockParticipantMicrophone()', () => {
             testCommandProxy({
                 command: 'blockParticipantMicrophone',
-                functionArguments: 'fake-id',
+                functionArguments: ['fake-id'],
                 expectedRequestPayload: { id: 'fake-id' }
             });
         });
@@ -391,7 +414,7 @@ describe('Proficonf', () => {
         describe('unblockParticipantMicrophone()', () => {
             testCommandProxy({
                 command: 'unblockParticipantMicrophone',
-                functionArguments: 'fake-id',
+                functionArguments: ['fake-id'],
                 expectedRequestPayload: { id: 'fake-id' }
             });
         });
@@ -399,7 +422,7 @@ describe('Proficonf', () => {
         describe('askToEnableParticipantCamera()', () => {
             testCommandProxy({
                 command: 'askToEnableParticipantCamera',
-                functionArguments: 'fake-id',
+                functionArguments: ['fake-id'],
                 expectedRequestPayload: { id: 'fake-id' }
             });
         });
@@ -407,7 +430,7 @@ describe('Proficonf', () => {
         describe('blockParticipantCamera()', () => {
             testCommandProxy({
                 command: 'blockParticipantCamera',
-                functionArguments: 'fake-id',
+                functionArguments: ['fake-id'],
                 expectedRequestPayload: { id: 'fake-id' }
             });
         });
@@ -415,23 +438,15 @@ describe('Proficonf', () => {
         describe('unblockParticipantCamera()', () => {
             testCommandProxy({
                 command: 'unblockParticipantCamera',
-                functionArguments: 'fake-id',
+                functionArguments: ['fake-id'],
                 expectedRequestPayload: { id: 'fake-id' }
-            });
-        });
-
-        describe('setParticipantRole()', () => {
-            testCommandProxy({
-                command: 'setParticipantRole',
-                functionArguments: { participantId: 'fake-id', role: 'fake-role' },
-                expectedRequestPayload: { id: 'fake-id', role: 'fake-role' }
             });
         });
 
         describe('enableCamera()', () => {
             testCommandProxy({
                 command: 'enableCamera',
-                functionArguments: { stub: true },
+                functionArguments: [{ stub: true }],
                 expectedRequestPayload: { constraints: { stub: true } }
             });
         });
@@ -445,7 +460,7 @@ describe('Proficonf', () => {
         describe('setCameraDevice()', () => {
             testCommandProxy({
                 command: 'setCameraDevice',
-                functionArguments: 'fake-device-id',
+                functionArguments: ['fake-device-id'],
                 expectedRequestPayload: { deviceId: 'fake-device-id' }
             });
         });
@@ -459,7 +474,7 @@ describe('Proficonf', () => {
         describe('enableMicrophone()', () => {
             testCommandProxy({
                 command: 'enableMicrophone',
-                functionArguments: { stub: true },
+                functionArguments: [{ stub: true }],
                 expectedRequestPayload: { constraints: { stub: true } }
             });
         });
@@ -467,7 +482,7 @@ describe('Proficonf', () => {
         describe('setMicrophoneDevice()', () => {
             testCommandProxy({
                 command: 'setMicrophoneDevice',
-                functionArguments: 'fake-device',
+                functionArguments: ['fake-device'],
                 expectedRequestPayload: { deviceId: 'fake-device' }
             });
         });
@@ -505,7 +520,7 @@ describe('Proficonf', () => {
         describe('startScreenSharing()', () => {
             testCommandProxy({
                 command: 'startScreenSharing',
-                functionArguments: { stub: true },
+                functionArguments: [{ stub: true }],
                 expectedRequestPayload: { constraints: { stub: true } }
             });
         });
@@ -525,7 +540,7 @@ describe('Proficonf', () => {
         describe('disableParticipantMicrophone()', () => {
             testCommandProxy({
                 command: 'disableParticipantMicrophone',
-                functionArguments: 'fake-id',
+                functionArguments: ['fake-id'],
                 expectedRequestPayload: { id: 'fake-id' }
             });
         });
@@ -533,7 +548,7 @@ describe('Proficonf', () => {
         describe('disableParticipantCamera()', () => {
             testCommandProxy({
                 command: 'disableParticipantCamera',
-                functionArguments: 'fake-id',
+                functionArguments: ['fake-id'],
                 expectedRequestPayload: { id: 'fake-id' }
             });
         });
@@ -541,7 +556,7 @@ describe('Proficonf', () => {
         describe('blockParticipantMicrophone()', () => {
             testCommandProxy({
                 command: 'blockParticipantMicrophone',
-                functionArguments: 'fake-id',
+                functionArguments: ['fake-id'],
                 expectedRequestPayload: { id: 'fake-id' }
             });
         });
@@ -549,7 +564,7 @@ describe('Proficonf', () => {
         describe('blockParticipantCamera()', () => {
             testCommandProxy({
                 command: 'blockParticipantCamera',
-                functionArguments: 'fake-id',
+                functionArguments: ['fake-id'],
                 expectedRequestPayload: { id: 'fake-id' }
             });
         });
@@ -557,7 +572,7 @@ describe('Proficonf', () => {
         describe('unblockParticipantCamera()', () => {
             testCommandProxy({
                 command: 'unblockParticipantCamera',
-                functionArguments: 'fake-id',
+                functionArguments: ['fake-id'],
                 expectedRequestPayload: { id: 'fake-id' }
             });
         });
@@ -565,7 +580,7 @@ describe('Proficonf', () => {
         describe('unblockParticipantMicrophone()', () => {
             testCommandProxy({
                 command: 'unblockParticipantMicrophone',
-                functionArguments: 'fake-id',
+                functionArguments: ['fake-id'],
                 expectedRequestPayload: { id: 'fake-id' }
             });
         });
@@ -573,7 +588,7 @@ describe('Proficonf', () => {
         describe('setParticipantRole()', () => {
             testCommandProxy({
                 command: 'setParticipantRole',
-                functionArguments: { participantId: 'fake-id', role: 'fake-role' },
+                functionArguments: ['fake-id', 'fake-role' ],
                 expectedRequestPayload: { id: 'fake-id', role: 'fake-role' }
             });
         });
@@ -581,7 +596,7 @@ describe('Proficonf', () => {
         describe('setScreenLayout()', () => {
             testCommandProxy({
                 command: 'setScreenLayout',
-                functionArguments: 'fake-mode',
+                functionArguments: ['fake-mode'],
                 expectedRequestPayload: { layout: 'fake-mode' }
             });
         });
@@ -601,7 +616,7 @@ describe('Proficonf', () => {
         describe('startRecording()', () => {
             testCommandProxy({
                 command: 'startRecording',
-                functionArguments: 'fake-ui-state',
+                functionArguments: ['fake-ui-state'],
                 expectedRequestPayload: { uiState: 'fake-ui-state' },
             });
         });
@@ -609,7 +624,7 @@ describe('Proficonf', () => {
         describe('setRecordingConfig()', () => {
             testCommandProxy({
                 command: 'setRecordingConfig',
-                functionArguments: 'fake-ui-state',
+                functionArguments: ['fake-ui-state'],
                 expectedRequestPayload: { uiState: 'fake-ui-state' },
             });
         });
@@ -629,7 +644,7 @@ describe('Proficonf', () => {
         describe('sendChatMessage()', () => {
             testCommandProxy({
                 command: 'sendChatMessage',
-                functionArguments: 'fake-message',
+                functionArguments: ['fake-message'],
                 expectedRequestPayload: { message: 'fake-message' },
             });
         });
@@ -637,12 +652,12 @@ describe('Proficonf', () => {
         describe('updateUIConfig()', () => {
             testCommandProxy({
                 command: 'updateUIConfig',
-                functionArguments: {
+                functionArguments: [{
                     removeElements: ['fake-element'],
                     customPrimaryColor: 'fake-color',
                     customLogoSrc: 'fake-logo-src',
                     displayMode: 'fake-display-mode'
-                },
+                }],
                 expectedRequestPayload: 'fake-serialized-object'
             });
         });
@@ -650,7 +665,7 @@ describe('Proficonf', () => {
         describe('startStream()', () => {
             testCommandProxy({
                 command: 'startStream',
-                functionArguments: { serverUrl: 'fake-server-url', streamKey: 'fake-stream-key' },
+                functionArguments: [{ serverUrl: 'fake-server-url', streamKey: 'fake-stream-key' }],
                 expectedRequestPayload: { serverUrl: 'fake-server-url', streamKey: 'fake-stream-key' },
             });
         });
@@ -658,7 +673,7 @@ describe('Proficonf', () => {
         describe('stopStream()', () => {
             testCommandProxy({
                 command: 'stopStream',
-                functionArguments: { serverUrl: 'fake-server-url', streamKey: 'fake-stream-key' },
+                functionArguments: [{ serverUrl: 'fake-server-url', streamKey: 'fake-stream-key' }],
                 expectedRequestPayload: { serverUrl: 'fake-server-url', streamKey: 'fake-stream-key' },
             });
         });
