@@ -24,4 +24,7 @@ export const UI_ELEMENTS_MAPPING = {
     sharingCenterMiroButton: 'shcmiro',
     sharingCenterYoutubeButton: 'shcytb',
     sharingCenterFilesButton: 'shcfb',
+    previewsParticipantName: 'pvpn',
+    previewsDeviceIcons: 'pvdi',
+    previewsAudioLevel: 'pval',
 };
