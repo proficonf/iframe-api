@@ -18,5 +18,13 @@ export const UI_ELEMENTS_MAPPING = {
     streamingControl: 'sc',
     displayModeButton: 'dmb',
     settingsButton: 'stb',
-    logo: 'l'
+    logo: 'l',
+    sharingCenterScreenButton: 'shcsb',
+    sharingCenterWhiteboardButton: 'shcwb',
+    sharingCenterMiroButton: 'shcmiro',
+    sharingCenterYoutubeButton: 'shcytb',
+    sharingCenterFilesButton: 'shcfb',
+    previewsParticipantName: 'pvpn',
+    previewsDeviceIcons: 'pvdi',
+    previewsAudioLevel: 'pval',
 };
