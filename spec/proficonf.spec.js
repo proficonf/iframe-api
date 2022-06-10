@@ -211,7 +211,7 @@ describe('Proficonf', () => {
             await proficonf.join();
 
             expect(iframeLoader.loadUrl).toHaveBeenCalledOnceWith(
-                'https://fake.com/j/meeting-alias?embedded=1&locale=fake-locale&un=fake-user-name&ui=fake-serialized-ui-config'
+                'https://fake.com/fake-locale/j/meeting-alias?embedded=1&un=fake-user-name&ui=fake-serialized-ui-config'
             );
         });
 
