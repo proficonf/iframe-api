@@ -27,7 +27,7 @@ export class Proficonf {
         ui = {},
     }) {
         const aliasMatch = MEETING_ALIAS_PATTERN.exec(meetingUrl);
-        this._meetingId = aliasMatch && aliasMatch[1];
+        this._alias = aliasMatch && aliasMatch[1];
         this._eventEmitter = DependencyContainer.get('eventEmitterFactory').create();
         this._rootElement = rootElement;
         this._meetingUrl = this._buildUrl({
@@ -327,7 +327,7 @@ export class Proficonf {
             targetWindow: this._iframeElement.contentWindow,
             window: DependencyContainer.get('window'),
             nanoid: DependencyContainer.get('nanoid'),
-            correlationId: this._meetingId
+            correlationId: this._alias
         });
     }
 
@@ -340,7 +340,7 @@ export class Proficonf {
     }
 
     _createIframeElement({ width, height, style = {} }) {
-        const iframeId = `ProficonfEmbeddedRoom-${this._meetingId}`;
+        const iframeId = `ProficonfEmbeddedRoom-${this._alias}`;
         const document = DependencyContainer.get('document');
         const iframe = document.createElement('iframe');
 
@@ -365,7 +365,7 @@ export class Proficonf {
         url.searchParams.append('embedded', '1');
 
         if (user.locale) {
-            url.searchParams.append('locale', user.locale);
+            url.pathname = '/' + user.locale + url.pathname;
         }
 
         const serializedConfig = DependencyContainer.get('interfaceConfigSerializer').serializeToString(interfaceConfig);
@@ -385,4 +385,3 @@ export class Proficonf {
         return url.toString();
     }
 }
-
