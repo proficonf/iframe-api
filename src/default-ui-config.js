@@ -27,4 +27,6 @@ export const UI_ELEMENTS_MAPPING = {
     previewsParticipantName: 'pvpn',
     previewsDeviceIcons: 'pvdi',
     previewsAudioLevel: 'pval',
+    participantListMenuRemoved: 'plmr',
+    participantListDevicesRemoved: 'pldr'
 };
